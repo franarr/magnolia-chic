@@ -1,0 +1,1183 @@
+<!doctype html>
+<html lang="es" class="h-full">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Magnolia Chic — Marroquinería & Accesorios. Tienda online multimarca.">
+  <title>Magnolia Chic — Marroquinería &amp; Accesorios</title>
+  <script src="https://cdn.tailwindcss.com/3.4.17"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&amp;family=Raleway:wght@300;400;500;600&amp;family=Montserrat:wght@300;400;500;600&amp;display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <noscript>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&amp;family=Raleway:wght@300;400;500;600&amp;family=Montserrat:wght@300;400;500;600&amp;display=swap" rel="stylesheet">
+  </noscript>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            burgundy: '#6F1D1B',
+            'burgundy-dark': '#5a1816',
+            beige: '#F5F0E6',
+            'beige-dark': '#E8E0D0'
+          },
+          fontFamily: {
+            'display': ['Playfair Display', 'serif'],
+            'heading': ['Raleway', 'sans-serif'],
+            'body': ['Montserrat', 'sans-serif']
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    html { scroll-behavior: smooth; }
+    .product-card:hover .product-image { transform: scale(1.05); }
+    .product-image { transition: transform 0.5s ease; }
+    .nav-link { position: relative; }
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 0;
+      height: 2px;
+      background: #6F1D1B;
+      transition: width 0.3s ease;
+    }
+    .nav-link:hover::after { width: 100%; }
+    .swatch { transition: transform 0.2s ease, box-shadow 0.2s ease; }
+    .swatch:hover { transform: scale(1.2); box-shadow: 0 2px 8px rgba(0,0,0,0.2); }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fade-in { animation: fadeInUp 0.8s ease forwards; }
+    .animate-delay-1 { animation-delay: 0.1s; opacity: 0; }
+    .animate-delay-2 { animation-delay: 0.2s; opacity: 0; }
+    .animate-delay-3 { animation-delay: 0.3s; opacity: 0; }
+    .animate-delay-4 { animation-delay: 0.4s; opacity: 0; }
+    .modal-backdrop { backdrop-filter: blur(8px); }
+    .btn-whatsapp {
+      background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+      transition: all 0.3s ease;
+    }
+    .btn-whatsapp:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(37, 211, 102, 0.4); }
+    .price-transfer { text-shadow: 0 0 1px rgba(111,29,27,0.3); }
+    body { box-sizing: border-box; }
+    /* Editor Styles */
+    .edit-btn { position: absolute; top: 8px; right: 8px; z-index: 10; width: 36px; height: 36px; background: rgba(255,255,255,0.9); border-radius: 50%; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 20px; color: #6F1D1B; box-shadow: 0 2px 8px rgba(0,0,0,0.15); transition: all 0.2s; }
+    .edit-btn:hover { background: #6F1D1B; color: white; transform: scale(1.1); }
+    #edit-modal { font-family: 'Montserrat', sans-serif; }
+    #edit-modal input, #edit-modal textarea, #edit-modal select { width: 100%; padding: 10px 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; font-family: inherit; box-sizing: border-box; }
+    #edit-modal input:focus, #edit-modal textarea:focus { outline: none; border-color: #6F1D1B; box-shadow: 0 0 0 2px rgba(111,29,27,0.1); }
+    #edit-modal label { display: block; font-size: 12px; font-weight: 600; color: #555; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .edit-field { margin-bottom: 16px; }
+    .edit-images-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 8px; margin-top: 8px; }
+    .edit-img-thumb { position: relative; aspect-ratio: 1; border-radius: 8px; overflow: hidden; border: 2px solid #ddd; }
+    .edit-img-thumb img { width: 100%; height: 100%; object-fit: cover; }
+    .edit-img-thumb .remove-img { position: absolute; top: 2px; right: 2px; width: 22px; height: 22px; background: rgba(220,38,38,0.9); color: white; border: none; border-radius: 50%; cursor: pointer; font-size: 14px; line-height: 1; display: flex; align-items: center; justify-content: center; }
+    .edit-img-add { aspect-ratio: 1; border: 2px dashed #ccc; border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; color: #999; transition: all 0.2s; font-size: 12px; }
+    .edit-img-add:hover { border-color: #6F1D1B; color: #6F1D1B; }
+    .edit-save-btn { background: #6F1D1B; color: white; border: none; padding: 14px 32px; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; width: 100%; transition: all 0.2s; }
+    .edit-save-btn:hover { background: #5a1816; }
+    .edit-colors-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+    .edit-color-swatch { width: 32px; height: 32px; border-radius: 50%; border: 2px solid #ddd; cursor: pointer; position: relative; }
+    .edit-color-swatch .remove-color { position: absolute; top: -6px; right: -6px; width: 16px; height: 16px; background: red; color: white; border: none; border-radius: 50%; font-size: 10px; cursor: pointer; display: none; align-items: center; justify-content: center; line-height: 1; }
+    .edit-color-swatch:hover .remove-color { display: flex; }
+    .edit-reset-btn { background: transparent; color: #999; border: 1px solid #ddd; padding: 10px 20px; border-radius: 8px; font-size: 13px; cursor: pointer; margin-top: 8px; }
+    .edit-reset-btn:hover { border-color: #dc2626; color: #dc2626; }
+    /* Custom Scrollbar */
+    .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #E8E0D0; border-radius: 4px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #6F1D1B; }
+  </style>
+ </head>
+ <body class="h-full bg-beige font-body text-black overflow-x-hidden">
+  <div id="app-container" class="w-full">
+   <!-- Mobile Menu Overlay -->
+   <div id="mobile-menu" class="fixed inset-0 bg-black/90 z-50 hidden flex-col items-center justify-center">
+    <button onclick="toggleMobileMenu()" class="absolute top-6 right-6 text-white text-3xl">×</button>
+    <nav class="flex flex-col items-center gap-8 text-center">
+     <a href="#billeteras-y-accesorios" onclick="toggleMobileMenu()" class="text-white text-xl font-heading tracking-widest hover:text-beige transition">BILLETERAS Y ACCESORIOS</a> <a href="#bolsos-y-mochilas" onclick="toggleMobileMenu()" class="text-white text-xl font-heading tracking-widest hover:text-beige transition">BOLSOS Y MOCHILAS</a> <a href="#sombreros-y-gorras" onclick="toggleMobileMenu()" class="text-white text-xl font-heading tracking-widest hover:text-beige transition">SOMBREROS Y GORRAS</a> <a href="#contacto" onclick="toggleMobileMenu()" class="text-white text-xl font-heading tracking-widest hover:text-beige transition">CONTACTO</a>
+    </nav>
+   </div>
+   
+   <!-- Product Modal -->
+   <div id="product-modal" class="fixed inset-0 bg-black/80 z-50 hidden modal-backdrop overflow-y-auto">
+    <div class="min-h-full flex items-end sm:items-center justify-center p-0 sm:p-4">
+     <div class="bg-white rounded-t-3xl sm:rounded-2xl max-w-4xl w-full relative overflow-hidden mt-16 sm:mt-0 shadow-2xl animate-fade-in" style="animation-duration: 0.3s">
+      <button onclick="closeModal()" class="absolute top-3 right-3 sm:top-4 sm:right-4 z-20 w-8 h-8 sm:w-10 sm:h-10 bg-white/90 sm:bg-beige rounded-full flex items-center justify-center text-burgundy hover:bg-burgundy hover:text-white transition shadow-sm backdrop-blur-sm">
+       <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+       </svg></button>
+      <div class="grid md:grid-cols-2 gap-0 overflow-hidden">
+       <div class="bg-beige flex items-center justify-center md:h-full relative overflow-hidden aspect-[4/3] sm:aspect-[4/3] md:aspect-auto">
+         <div id="modal-image" class="absolute inset-0 bg-gradient-to-br from-burgundy/5 to-burgundy/10 flex flex-col items-center justify-center overflow-hidden">
+          <div class="swiper modal-swiper w-full h-full">
+            <div class="swiper-wrapper" id="modal-image-wrapper">
+              <!-- Slides dynamically added here -->
+            </div>
+            <div class="swiper-pagination !bottom-2"></div>
+            <div class="swiper-button-prev !text-burgundy opacity-0 md:opacity-70 hover:opacity-100 transition !w-8 !h-8 after:!text-xl bg-white/50 rounded-full !left-2 backdrop-blur-sm"></div>
+            <div class="swiper-button-next !text-burgundy opacity-0 md:opacity-70 hover:opacity-100 transition !w-8 !h-8 after:!text-xl bg-white/50 rounded-full !right-2 backdrop-blur-sm"></div>
+          </div>
+         </div>
+        </div>
+       <div class="p-6 sm:p-8 flex flex-col max-h-[65vh] sm:max-h-none overflow-y-auto">
+        <span id="modal-sku" class="text-xs sm:text-sm text-burgundy/60 font-medium tracking-wider">SKU BL-A-01</span>
+        <h3 id="modal-name" class="font-display text-2xl sm:text-3xl text-burgundy mt-1 mb-2 sm:mb-4 leading-tight">Nombre del Producto</h3>
+        
+        <div class="flex-1 min-h-0 mb-4 sm:mb-6">
+         <p id="modal-desc" class="text-sm sm:text-base text-gray-600 leading-relaxed whitespace-pre-line">Descripción del producto con detalles de materiales, dimensiones y características especiales.</p>
+        </div>
+        
+        <div class="mt-auto">
+         <div class="mb-4 sm:mb-6">
+          <span class="text-xs sm:text-sm text-gray-500 block mb-2 font-medium">Colores disponibles:</span>
+          <div id="modal-colors" class="flex gap-2 sm:gap-3 flex-wrap">
+           <!-- Colors added dynamically -->
+          </div>
+         </div>
+         
+         <div class="bg-beige rounded-xl p-3 sm:p-4 mb-4 sm:mb-5">
+          <div class="flex items-baseline justify-between mb-1">
+           <span class="text-xs sm:text-sm text-gray-500 font-medium">Transferencia:</span> <span id="modal-price-transfer" class="text-xl sm:text-2xl font-bold text-burgundy price-transfer">$26.800</span>
+          </div>
+          <div class="flex items-baseline justify-between">
+           <span class="text-xs sm:text-sm text-gray-500 font-medium">Tarjeta:</span> <span id="modal-price-card" class="text-sm sm:text-lg text-gray-600">$34.900</span>
+          </div>
+         </div>
+         
+         <div class="flex items-center gap-3 sm:gap-4 mb-4 sm:mb-5">
+           <span class="text-xs sm:text-sm text-gray-500 font-medium">Cantidad:</span>
+           <div class="flex items-center border border-gray-300 rounded-lg bg-white h-9 sm:h-10 overflow-hidden">
+            <button onclick="changeQty(-1)" class="w-9 sm:w-10 h-full flex items-center justify-center text-burgundy hover:bg-beige transition text-lg">−</button> <span id="modal-qty" class="w-10 sm:w-12 text-center text-sm font-medium">1</span> <button onclick="changeQty(1)" class="w-9 sm:w-10 h-full flex items-center justify-center text-burgundy hover:bg-beige transition text-lg">+</button>
+           </div>
+          </div>
+          
+          <button id="modal-whatsapp-btn" onclick="orderFromModal()" class="w-full btn-whatsapp text-white py-3 sm:py-4 rounded-xl text-sm sm:text-base font-semibold flex items-center justify-center gap-2 mb-2 sm:mb-3 shadow-md hover:shadow-lg transition-all">
+           <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="currentColor" viewbox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" />
+          </svg> Pedir por WhatsApp </button>
+         <p class="text-[10px] sm:text-xs text-gray-400 text-center uppercase tracking-wide">Precios sujetos a stock y disponibilidad</p>
+        </div>
+       </div>
+      </div>
+     </div>
+    </div>
+   </div>
+   
+   <!-- Edit Modal -->
+   <div id="edit-modal" class="fixed inset-0 bg-black/80 z-[60] hidden" style="backdrop-filter:blur(8px)">
+    <div class="min-h-full flex items-center justify-center p-4">
+     <div class="bg-white rounded-2xl max-w-lg w-full relative overflow-hidden max-h-[90vh] flex flex-col">
+      <div class="flex items-center justify-between p-5 border-b">
+       <h3 id="edit-modal-title" class="font-display text-xl text-burgundy">Editar Producto</h3>
+       <button onclick="closeEditModal()" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 text-gray-500">✕</button>
+      </div>
+      <div class="p-5 overflow-y-auto flex-1">
+       <input type="hidden" id="edit-sku">
+       <input type="hidden" id="edit-mode" value="edit">
+       <div class="edit-field" id="edit-category-field">
+        <label>Categoría</label>
+        <select id="edit-category" style="padding:10px 12px;border:1px solid #ddd;border-radius:8px;font-size:14px;width:100%">
+         <option value="Billeteras y Accesorios">Billeteras y Accesorios</option>
+         <option value="Bolsos y Mochilas">Bolsos y Mochilas</option>
+         <option value="Sombreros y Gorras">Sombreros y Gorras</option>
+        </select>
+       </div>
+       <div class="edit-field">
+        <label>Nombre del producto</label>
+        <input type="text" id="edit-name" placeholder="Ej: Bolso de Playa Trendy">
+       </div>
+       <div class="edit-field">
+        <label>Descripción</label>
+        <textarea id="edit-desc" rows="5" placeholder="Descripción del producto..."></textarea>
+       </div>
+       <div class="grid grid-cols-2 gap-3">
+        <div class="edit-field">
+         <label>Precio Transferencia</label>
+         <input type="text" id="edit-price-transfer" placeholder="$ 29.800">
+        </div>
+        <div class="edit-field">
+         <label>Precio Tarjeta</label>
+         <input type="text" id="edit-price-card" placeholder="$ 36.100">
+        </div>
+       </div>
+       <div class="edit-field">
+        <label>Colores (hex separados por coma)</label>
+        <input type="text" id="edit-colors" placeholder="#000000, #FF0000, #FFFFFF">
+        <div id="edit-colors-preview" class="edit-colors-row" style="margin-top:8px"></div>
+       </div>
+       <div class="edit-field">
+        <label>Imágenes</label>
+        <div id="edit-images-grid" class="edit-images-grid"></div>
+       </div>
+       <button onclick="saveProduct()" class="edit-save-btn">💾 Guardar Cambios</button>
+       <div class="text-center" id="edit-reset-container"><button onclick="resetProduct()" class="edit-reset-btn">↩ Restaurar Original</button></div>
+      </div>
+     </div>
+    </div>
+   </div>
+
+   <!-- Header -->
+   <header class="fixed top-0 left-0 right-0 bg-white/95 backdrop-blur-md z-40 border-b border-beige-dark">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+     <div class="flex items-center justify-between h-16 md:h-20">
+      <a href="#" class="flex items-center gap-2"> <img src="https://files.catbox.moe/bm6yyb.jpeg" alt="Magnolia Chic Logo" class="w-8 h-8 object-contain" loading="lazy" decoding="async" onerror="this.style.display='none';"><span class="font-display text-xl md:text-2xl text-burgundy tracking-wide">Magnolia Chic</span> </a>
+      <nav class="hidden lg:flex items-center gap-8">
+       <a href="#billeteras-y-accesorios" class="nav-link text-sm font-heading tracking-widest text-black hover:text-burgundy transition">BILLETERAS Y ACCESORIOS</a> <a href="#bolsos-y-mochilas" class="nav-link text-sm font-heading tracking-widest text-black hover:text-burgundy transition">BOLSOS Y MOCHILAS</a> <a href="#sombreros-y-gorras" class="nav-link text-sm font-heading tracking-widest text-black hover:text-burgundy transition">SOMBREROS Y GORRAS</a> <a href="#contacto" class="nav-link text-sm font-heading tracking-widest text-black hover:text-burgundy transition">CONTACTO</a>
+      </nav><button onclick="toggleMobileMenu()" class="lg:hidden w-10 h-10 flex flex-col items-center justify-center gap-1.5"> <span class="w-6 h-0.5 bg-burgundy"></span> <span class="w-6 h-0.5 bg-burgundy"></span> <span class="w-4 h-0.5 bg-burgundy"></span> </button>
+     </div>
+    </div>
+   </header>
+   
+   <!-- Hero Section -->
+   <section id="hero" class="min-h-screen flex items-center justify-center relative overflow-hidden pt-16 md:pt-20" style="background: linear-gradient(135deg, #F5F0E6 0%, #FFFFFF 50%, #F5F0E6 100%);">
+    <div class="absolute top-20 left-10 w-32 h-32 bg-burgundy/5 rounded-full blur-3xl"></div>
+    <div class="absolute bottom-20 right-10 w-48 h-48 bg-burgundy/10 rounded-full blur-3xl"></div>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center relative z-10">
+     <div class="animate-fade-in">
+      <div class="w-24 h-24 sm:w-32 sm:h-32 mx-auto mb-6 relative">
+       <img src="https://files.catbox.moe/bm6yyb.jpeg" alt="Magnolia Chic Logo" class="w-full h-full object-contain" loading="lazy" decoding="async">
+      </div>
+      <h1 class="font-display text-5xl sm:text-6xl md:text-7xl text-burgundy mb-4 animate-fade-in" style="line-height: 1.1;">Magnolia Chic</h1>
+      <div class="mb-10 animate-fade-in animate-delay-1">
+       <p class="font-heading text-lg md:text-xl tracking-[0.2em] text-burgundy font-semibold uppercase">Tienda online multimarca</p>
+      </div>
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-4 animate-fade-in animate-delay-2">
+       <a href="#billeteras-y-accesorios" class="group bg-burgundy text-white px-8 py-4 rounded-full font-heading tracking-wider text-sm hover:bg-burgundy-dark transition-all duration-300 flex items-center gap-2 min-h-[44px]"> VER CATÁLOGO <svg class="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg></a>
+       <a href="https://wa.me/5493425977934" target="_blank" rel="noopener noreferrer" class="btn-whatsapp text-white px-8 py-4 rounded-full font-heading tracking-wider text-sm flex items-center gap-2 min-h-[44px]"><svg class="w-5 h-5" fill="currentColor" viewbox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" /></svg> PEDIR POR WHATSAPP </a>
+      </div>
+     </div>
+     <div class="absolute bottom-10 left-1/2 -translate-x-1/2 animate-bounce">
+      <svg class="w-6 h-6 text-burgundy/50" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" /></svg>
+     </div>
+    </div>
+   </section>
+   
+   <div id="products-container"></div>
+
+   <!-- Contact CTA Section -->
+   <section id="contacto" class="py-24 bg-beige text-center border-t border-beige-dark">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+     <h2 class="font-display text-4xl md:text-5xl text-burgundy mb-6">¿Tenés dudas o querés encargar?</h2>
+     <p class="font-body text-gray-700 mb-10 text-lg">Escribinos directo por WhatsApp. Te asesoramos sobre stock, talles, colores y envíos en el acto.</p>
+     <a href="https://wa.me/5493425977934" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center gap-3 bg-burgundy text-white px-10 py-5 rounded-full font-heading tracking-widest text-lg hover:bg-burgundy-dark transition-all duration-300 shadow-xl hover:shadow-2xl hover:-translate-y-1">
+       <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+       HABLAR CON VENTAS
+     </a>
+    </div>
+   </section>
+
+   <footer class="bg-black text-white py-10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center flex flex-col items-center gap-5">
+     <div class="bg-white/10 px-6 py-3 rounded-full inline-block backdrop-blur-sm">
+       <p class="text-sm md:text-base font-medium tracking-wide uppercase text-white/90 flex items-center justify-center gap-2">
+         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+         Envíos a todo el país | Retiro gratis en Showroom
+       </p>
+     </div>
+     <p class="text-white/60 text-sm max-w-md mx-auto leading-relaxed">
+       Aceptamos Transferencia <span class="text-white font-semibold">(10% OFF)</span><br> Mercado Pago y Efectivo en el local.
+     </p>
+     <hr class="w-24 border-white/10 my-2">
+     <p class="text-xs text-white/40 tracking-wider">© 2026 Magnolia Chic. Todos los derechos reservados.</p>
+    </div>
+   </footer>
+   <a id="floating-whatsapp" href="https://wa.me/5493425977934" target="_blank" rel="noopener noreferrer" class="fixed bottom-6 right-6 btn-whatsapp text-white w-14 h-14 rounded-full flex items-center justify-center shadow-lg z-30 hover:scale-110 transition-transform" aria-label="WhatsApp">
+    <svg class="w-7 h-7" fill="currentColor" viewbox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z" /></svg></a>
+   <button onclick="openNewProductModal()" class="fixed bottom-6 left-6 bg-burgundy text-white w-14 h-14 rounded-full flex items-center justify-center shadow-lg z-30 hover:scale-110 transition-transform hover:bg-burgundy-dark" title="Agregar nuevo producto" style="font-size:28px">+</button>
+  </div>
+  <script>
+    // Configuration
+    const defaultConfig = {
+      tagline_main: 'Tienda online multimarca',
+      tagline_sub: '👜 Carteras y accesorios de primeras marcas originales',
+      whatsapp_number: '5493425977934',
+      hero_title: 'Clásicas. Modernas. Magnolia.',
+      footer_hours: 'Lun-Vie 9-18hs'
+    };
+
+    const products = [
+      {
+        sku: 'BM-002',
+        category: 'Bolsos y Mochilas',
+        categoryId: 'bolsos-y-mochilas',
+        name: 'Bolso de playa Las Oreiro - Bonjour',
+        description: 'Medidas: alto 38cm x ancho 43cm x profundidad 14cm\nMaterial exterior: 100% Paper. Material interno: Tela.\n\nEs un bolso moderno, liviano y funcional, ideal para acompañarte en días de playa, actividades al aire libre o paseos informales.\n\n* Dos asas de transporte.\n* Bolsillo principal con cierre.\n* Un bolsillo interno.\n* Forrado en su interior.\n* Acabado de los herrajes: Níquel\n* Fabricada con productos veganos.',
+        priceTransfer: '$ 34.900',
+        priceCard: '$ 42.200',
+        colors: ['#BDB76B', '#FF1493', '#98FF98'],
+        images: ['./assets/images/BM-002_1.jpg', './assets/images/BM-002_2.jpg', './assets/images/BM-002_3.jpg']
+      },
+      {
+        sku: 'BM-003',
+        category: 'Bolsos y Mochilas',
+        categoryId: 'bolsos-y-mochilas',
+        name: 'Bolso Fleco Las Oreiro',
+        description: 'Medidas: 40 cm alto x 44 cm ancho \nIdeal para paseos, playa o pileta. \n\n* Diseño del bolsillo principal con cierre para mayor seguridad.\n* Dos asas de transporte.\n* Un bolsillo interno.\n* Con forro interior que añade durabilidad.\n* Acabado de los herrajes: Níquel.\n* Fabricado con productos veganos.',
+        priceTransfer: '$ 35.200',
+        priceCard: '$ 42.600',
+        colors: ['#4b321a'],
+        images: ['./assets/images/BM-003_1.jpg', './assets/images/BM-003_2.jpg']
+      },
+      {
+        sku: 'BM-004',
+        category: 'Bolsos y Mochilas',
+        categoryId: 'bolsos-y-mochilas',
+        name: 'Bolso de Playa Trendy Paradise',
+        description: 'Medidas: alto 38cm x ancho 38cm x profundidad 12cm\nMaterial: Mezcla de 80% poliéster y 20% algodón, que combina resistencia, ligereza y un tacto suave.\n\n* Su formato amplio ofrece gran capacidad de guardado, ideal para llevar tus imprescindibles de playa o de uso diario.\n* Cierre superior para mayor seguridad.\n* Asas reforzadas y cómodas, adecuadas para colgar al hombro.\n* Interior forrado.\n* Diseño moderno y fresco.\n* Versátil y funcional, perfecta para playa, piscina o salidas informales.',
+        priceTransfer: '$ 29.800',
+        priceCard: '$ 36.100',
+        colors: ['#000000', '#FFFFF0', '#4E3A2F'],
+        images: ['./assets/images/BM-004_1.jpg', './assets/images/BM-004_2.jpg', './assets/images/BM-004_3.jpg']
+      },
+      {
+        sku: 'BA-001',
+        category: 'Billeteras y Accesorios',
+        categoryId: 'billeteras-y-accesorios',
+        name: 'Billetera Maxi Las Oreiro',
+        description: '22cm ancho x 13cm alto x 3cm prof. Material: Ecocuero. Interior forrado. Amplia división principal, monedero separado, espacios para tarjetas y compartimiento tipo acordeón. Incluye packaging.',
+        priceTransfer: '$28.800',
+        priceCard: '$34.900',
+        colors: ['#000000', '#8B4513'],
+        images: ['./assets/images/BA-001_1.jpg', './assets/images/BA-001_2.jpg']
+      },
+      {
+        sku: 'BA-002',
+        category: 'Billeteras y Accesorios',
+        categoryId: 'billeteras-y-accesorios',
+        name: 'Billetera Las Oreiro "Puntito"',
+        description: '19cm ancho x 10cm alto x 3cm prof. Material: Eco Cuero. Interior forrado. Monedero con cierre, amplia división, y espacios para tarjetas. Incluye llavero y packaging.',
+        priceTransfer: '$29.850',
+        priceCard: '$36.100',
+        colors: ['#E6C2BF'],
+        images: ['./assets/images/BA-002_1.jpg', './assets/images/BA-002_2.jpg']
+      },
+      {
+        sku: 'BA-003',
+        category: 'Billeteras y Accesorios',
+        categoryId: 'billeteras-y-accesorios',
+        name: 'Billetera Las Oreiro "Letras"',
+        description: '19cm ancho x 10cm alto x 3cm prof. Material: Ecocuero texturado. Interior forrado. Compartimiento principal con cierre reforzado, tarjetero y monedero. Logo frontal metálico. Incluye packaging.',
+        priceTransfer: '$27.800',
+        priceCard: '$33.600',
+        colors: ['#C19A6B', '#000000'],
+        images: ['./assets/images/BA-003_1.jpg', './assets/images/BA-003_2.jpg']
+      },
+      {
+        sku: 'BA-004',
+        category: 'Billeteras y Accesorios',
+        categoryId: 'billeteras-y-accesorios',
+        name: 'Billetera Las Oreiro "Love"',
+        description: '18,5cm ancho x 10cm alto x 3cm prof. Material: Poliéster. Diseño elegante, liviana y cómoda. Amplia división principal para documentos y billetes. Monedero separado.',
+        priceTransfer: '$28.300',
+        priceCard: '$34.200',
+        colors: ['#FF0000', '#000000', '#C3B091'],
+        images: ['./assets/images/BA-004_1.jpg', './assets/images/BA-004_2.jpg', './assets/images/BA-004_3.jpg']
+      },
+      {
+        sku: 'BA-005',
+        category: 'Billeteras y Accesorios',
+        categoryId: 'billeteras-y-accesorios',
+        name: 'Billetera Las Oreiro "O"',
+        description: '19cm ancho x 9cm alto x 3cm prof. Material: Eco Cuero. Amplia división principal de acordeón, cierres reforzados con zippers metálicos. Liviana y amplia. Incluye packaging.',
+        priceTransfer: '$27.100',
+        priceCard: '$32.600',
+        colors: ['#000000', '#C3B091'],
+        images: ['./assets/images/BA-005_1.jpg', './assets/images/BA-005_2.jpg']
+      },
+      {
+        sku: 'BA-006',
+        category: 'Billeteras y Accesorios',
+        categoryId: 'billeteras-y-accesorios',
+        name: 'Body Splash - Night',
+        description: '100 ml - Floral Amaderado. Fragancia ideal para noches. Dulces y seductoras cualidades de Jazmín que le dan un brillo de feminidad.',
+        priceTransfer: '$14.800',
+        priceCard: '$17.900',
+        colors: ['#800080', '#000000'],
+        images: ['./assets/images/BA-006_1.jpg', './assets/images/BA-006_2.jpg']
+      },
+      {
+        sku: 'BA-007',
+        category: 'Billeteras y Accesorios',
+        categoryId: 'billeteras-y-accesorios',
+        name: 'Body Splash - Red Lips',
+        description: '100 ml - Floral, Frutal y Musk. Formato spray fácil de aplicar. Salida frutal, corazón de flores blancas, verdadero encanto en el fondo cálido de maderas y vainilla.',
+        priceTransfer: '$14.800',
+        priceCard: '$17.900',
+        colors: ['#FF0000'],
+        images: ['./assets/images/BA-007_1.jpg', './assets/images/BA-007_2.jpg']
+      },
+      {
+        sku: 'BA-008',
+        category: 'Bolsos y Mochilas',
+        categoryId: 'bolsos-y-mochilas',
+        name: 'Bolso - Canasto Las Oreiro',
+        description: 'Amplio con medidas de 30cm alto x 43cm ancho x 8cm profundidad.\nMaterial exterior: 100% Cotton\nMaterial interno: tela\n\nOpción ideal para quienes buscan comodidad y estética en un solo accesorio.\n\n* Dos asas de transporte.\n* Bolsillo principal con cierre.\n* Un bolsillo interno.\n* Forrado en su interior.\n* Acabado de los herrajes: Níquel.\n* Fabricada con productos veganos.\n* Ofrece un diseño resistente y fresco, ideal para la playa, la pileta o salidas informales.\n* Práctica, liviana y con el estilo único de Oreiro Love.',
+        priceTransfer: '$ 46.900',
+        priceCard: '$ 56.800',
+        colors: ['#BDB76B', '#000000'],
+        images: ['./assets/images/BA-008_1.jpg', './assets/images/BA-008_2.jpg']
+      },
+      {
+        sku: 'BA-009',
+        category: 'Billeteras y Accesorios',
+        categoryId: 'billeteras-y-accesorios',
+        name: 'Body Splash Las Oreiro JOY',
+        description: 'Volumen: 100 ml\nFamilia olfativa: Floral - Frutal\n\n* Una fragancia dinámica, fresca, floral y afrutada que evoca la sensualidad de la mujer mediterránea.\n* Alegre y vibrante el limón siciliano se mezcla con la manzana y el bamboo dejando pasar al delicado y sensual jazmín ambarado.\n* Fragancia diseñada especialmente para la mujer moderna y elegante que disfruta de los aromas frescos y vibrantes.\n* El tamaño es perfecto para llevar en el bolso y refrescarte en cualquier momento del día.\n* Formato de aplicación spray que facilita la dosificación.',
+        priceTransfer: '$ 14.800',
+        priceCard: '$ 17.900',
+        colors: ['#FFC0CB', '#FFFFFF'],
+        images: ['./assets/images/BA-009_1.jpg', './assets/images/BA-009_2.jpg']
+      },
+      {
+        sku: 'SG-001',
+        category: 'Sombreros y Gorras',
+        categoryId: 'sombreros-y-gorras',
+        name: 'Gorra Urbana Oreiro Kisses',
+        description: 'Alto 14cm x 20cm diám. 100% Algodón. Material transpirable y anti-desgarre. Visera curva y logo frontal.',
+        priceTransfer: '$19.600',
+        priceCard: '$23.700',
+        colors: ['#808080', '#000000'],
+        images: ['./assets/images/SG-001_1.jpg', './assets/images/SG-001_2.jpg', './assets/images/SG-001_3.jpg', './assets/images/SG-001_4.jpg']
+      },
+      {
+        sku: 'SG-002',
+        category: 'Sombreros y Gorras',
+        categoryId: 'sombreros-y-gorras',
+        name: 'Gorra Urbana Oreiro Love',
+        description: 'Alto 14cm x 20cm diám. 100% Algodón. Visera curva y fresca. Ideal primavera/verano. Logo bordado frontal.',
+        priceTransfer: '$19.600',
+        priceCard: '$23.700',
+        colors: ['#0000FF', '#000000'],
+        images: ['./assets/images/SG-002_1.jpg', './assets/images/SG-002_2.jpg', './assets/images/SG-002_3.jpg', './assets/images/SG-002_4.jpg']
+      },
+      {
+        sku: 'SG-003',
+        category: 'Sombreros y Gorras',
+        categoryId: 'sombreros-y-gorras',
+        name: 'Capelina Mujer Verano',
+        description: 'Diámetro 38cm. Copa: 12x20cm. 100% Paper/Rafia. Banda decorativa. Versátil para días calurosos y playeros.',
+        priceTransfer: '$25.700',
+        priceCard: '$31.100',
+        colors: ['#C3B091', '#F5F5DC', '#4E3A2F'],
+        images: ['./assets/images/SG-003_1.jpg', './assets/images/SG-003_2.jpg', './assets/images/SG-003_3.jpg']
+      },
+      {
+        sku: 'BM-005',
+        category: 'Bolsos y Mochilas',
+        categoryId: 'bolsos-y-mochilas',
+        name: 'Bolso Trendy Deportivo / De Viaje / Urbano',
+        description: 'Medidas: 50cm de ancho x 30cm de alto x 28cm de profundidad\nMaterial: 100% Nylon\n\nEste bolso está pensado para acompañarte desde el gym hasta una escapada o un vuelo. Tiene un diseño moderno con la practicidad que necesitás todos los días.\n\n* Amplio compartimiento principal con gran capacidad de guardado.\n* Correa de hombro extraible y ajustable para mayor comodidad.\n* Dos asas de transporte.\n* Un bolsillo frontal con cierre.\n* Botinero lateral independiente para calzado o ropa húmeda.\n* Bolsillo lateral de red para botella o accesorios.\n* Un bolsillo interno y forrado interior.\n* Portallaves integrado.\n* Sujeción trasera para valija.\n* Material liviano, resistente y fácil de limpiar.',
+        priceTransfer: '$ 34.200',
+        priceCard: '$ 41.300',
+        colors: ['#ADD8E6', '#FFC0CB', '#000000'],
+        images: ['./assets/images/BM-005_1.png', './assets/images/BM-005_2.jpg']
+      },
+      {
+        sku: 'BM-006',
+        category: 'Bolsos y Mochilas',
+        categoryId: 'bolsos-y-mochilas',
+        name: 'Mochila Cartera Urbana Trendy',
+        description: 'Medidas: 37cm alto x 16cm ancho x 13 cm profundidad\nMaterial: Eco Cuero. Interior forrado con logo de la marca.\n\nSu estilo urbano y moderno la convierte en un complemento imprescindible para cualquier outfit. Estilo moderno y minimalista, con líneas limpias y estructura semi rígida.\n\n* Amplio compartimiento principal con división funcional.\n* Abertura con solapa y cierre marinero.\n* Bolsillos internos, uno de ellos con cierre.\n* Tiras ajustables para usar como mochila.\n* Material resistente anti desgarre.\n* Asa superior reforzada.\n* Cierres reforzados.\n* Resistente y Liviana.',
+        priceTransfer: 'Consultar',
+        priceCard: 'Consultar',
+        colors: ['#800000', '#000000', '#8B4513'],
+        images: ['./assets/images/BM-006_1.jpg', './assets/images/BM-006_2.jpg', './assets/images/BM-006_3.jpg']
+      },
+      {
+        sku: 'BM-007',
+        category: 'Bolsos y Mochilas',
+        categoryId: 'bolsos-y-mochilas',
+        name: 'Tote Bag Las Oreiro',
+        description: 'Medidas: Alto 32cm x Ancho 34cm x Profundidad 14cm\nMaterial exterior: Poliéster. Material interno: Tela estampada con logo.\n\nEsta cartera es la elección perfecta para quienes buscan elegancia y practicidad en su día a día.\n\n- Amplio compartimiento principal\n- Sujeción para valijas\n- Dos bolsillos frontales, uno de ellos con solapa\n- Dos bolsillos laterales\n- Bolsillos internos organizadores\n- Material resistente anti desgarre\n- Dos asas superiores reforzadas y cierres reforzados\n- Logo frontal Trendy, zippers metálicos y llavero decorativo',
+        priceTransfer: 'Consultar',
+        priceCard: 'Consultar',
+        colors: ['#8B0000', '#008000'],
+        images: ['./assets/images/BM-007_1.jpg', './assets/images/BM-007_2.jpg']
+      },
+      {
+        sku: 'BM-008',
+        category: 'Bolsos y Mochilas',
+        categoryId: 'bolsos-y-mochilas',
+        name: 'Cartera Tote Las Oreiro',
+        description: 'Medidas: 35 cm alto x 45 cm ancho x 14 cm profundidad \nDiseño cómodo y elegante que combina con cualquier look. \nLa marca Oreiro Love es sinónimo de calidad y atención al detalle, lo que se refleja en cada aspecto de esta cartera.\n\n* Amplio compartimiento principal.\n* Material resistente anti desgarre.\n* Tres bolsillos organizadores internos, uno de ellos con cierre.\n* Dos asas superiores reforzadas.\n* Cierres reforzados.\n* Acabado de los herrajes: Níquel.\n* Resistente y liviana.\n* Portallaves interno para localizarlas rápidamente.\n* Esta Tote Bag es un básico moderno que no pasa de moda.\n* Es el complemento ideal para la mujer moderna que busca estilo y funcionalidad.',
+        priceTransfer: 'Consultar',
+        priceCard: 'Consultar',
+        colors: ['#6b7b88', '#9b6348'],
+        images: ['./assets/images/BM-008_1.jpg', './assets/images/BM-008_2.jpg', './assets/images/BM-008_3.jpg']
+      },
+      {
+        sku: 'BM-009',
+        category: 'Bolsos y Mochilas',
+        categoryId: 'bolsos-y-mochilas',
+        name: 'Bolso Deportivo Everlast Urbano / De Viaje / Gimnasio',
+        description: 'Medidas: Ancho: 48 cm x Alto: 37 cm x Profundidad: 29 cm\nColor: Negro. Material externo: Cordura.\n\nCapacidad de 51 L para llevar todo lo necesario en viajes o gimnasio. Modelo Ultra Liviano y fácil de transportar.\n\n* Confeccionado en tela altamente resistente anti desgarre.\n* Interior forrado y costuras reforzadas.\n* Amplio compartimiento central con cierre de doble abertura.\n* Dos compartimientos laterales con cierre.\n* Correa de hombro ajustable y desmontable.\n* Asas superiores con soporte acolchado que adhiere con abrojo.\n* Base con apoyo.',
+        priceTransfer: '$ 37.200',
+        priceCard: '$ 45.100',
+        colors: ['#000000'],
+        images: ['./assets/images/BM-009_1.jpg', './assets/images/BM-009_2.jpg']
+      },
+      {
+        sku: 'BM-010',
+        category: 'Bolsos y Mochilas',
+        categoryId: 'bolsos-y-mochilas',
+        name: 'Mochila Everlast Urbana',
+        description: 'Medidas: Alto 45cm x Ancho 30cm x Profundidad 15cm.\nCapacidad: 20 L. Tamaño: 17". Porta Notebook 15,6".\nColor: Negro. Material externo: Poliéster.\n\nConfeccionado con tela altamente reforzada anti desgarre. Interior forrado. Liviana y Resistente.\n\n* Bolsillos laterales de red para fácil acceso a botellas.\n* Modelo Ultra Liviano y fácil de transportar.\n* Logo frontal Everlast.\n* Tiras acolchadas para mayor comodidad en los hombros.\n* Espalda acolchada para un mejor soporte.\n* Divisiones frontales con cierre para organización.',
+        priceTransfer: '$ 25.500',
+        priceCard: '$ 30.750',
+        colors: ['#000000'],
+        images: ['./assets/images/BM-010_1.jpg', './assets/images/BM-010_2.jpg']
+      },
+      {
+        sku: 'BM-011',
+        category: 'Bolsos y Mochilas',
+        categoryId: 'bolsos-y-mochilas',
+        name: 'Mochila Everlast',
+        description: 'Medidas: 45cm Alto x 33cm Ancho x 14cm Profundidad - 18"\nColor: Verde. Material externo: Poliéster reforzado.\n\nLa mochila Everlast es la compañera ideal para tus aventuras urbanas y escolares. Diseñada para ofrecer funcionalidad y comodidad en cada uso. Compartimento para notebook, ideal para transporte seguro.\n\n* 5 bolsillos para una organización óptima de tus pertenencias.\n* Espaldar acolchado con sistema Air Mesh para un soporte cómodo.\n* Cinchas y cordones laterales permiten un ajuste personalizado.\n* Profundidad de 14 cm que permite una buena capacidad sin ser voluminosa.',
+        priceTransfer: '$ 32.100',
+        priceCard: '$ 38.700',
+        colors: ['#008000'],
+        images: ['./assets/images/BM-011_1.jpg', './assets/images/BM-011_2.jpg']
+      },
+      {
+        sku: 'BM-012',
+        category: 'Bolsos y Mochilas',
+        categoryId: 'bolsos-y-mochilas',
+        name: 'Mochila Deportiva Everlast Running Trekking Ciclismo - Unisex',
+        description: 'Medidas: 44cm Alto x 26cm Ancho x 14cm Profundidad\nColor: Azul. Confeccionada en 100% Poliester.\n\nCapacidad de la mochila: 10 L. Diseño ultraligero que facilita el transporte. Reforzada para mayor durabilidad.\n\n* Diseño Anatómico y Aerodinámico.\n* Cierres reforzados con tiradores para mayor comodidad.\n* Un bolsillo frontal con cierre para artículos pequeños.\n* Tiras acolchadas y regulables.\n* Espaldar acolchado Air Mesh.',
+        priceTransfer: '$ 25.600',
+        priceCard: '$ 30.900',
+        colors: ['#000080'],
+        images: ['./assets/images/BM-012_1.jpg', './assets/images/BM-012_2.jpg']
+      },
+      {
+        sku: 'BM-013',
+        category: 'Bolsos y Mochilas',
+        categoryId: 'bolsos-y-mochilas',
+        name: 'Morral Bandolera',
+        description: '19x24x10 cm. 100% Nylon. Ultra liviana. Cuenta con doble compartimiento, bolsillo anti-robo posterior y frontal.',
+        priceTransfer: 'Consultar',
+        priceCard: 'Consultar',
+        colors: ['#000000'],
+        images: ['./assets/images/BM-013_2.jpg']
+      }
+    ,
+      {
+        sku: 'BM-014',
+        category: 'Bolsos y Mochilas',
+        categoryId: 'bolsos-y-mochilas',
+        name: 'Cartera Las Oreiro',
+        description: 'Medidas: 19 cm alto x 30 cm ancho x 11 profundidad \nDiseño con solapa/tapa y correa que combina Eco cuero con elegantes cadenas que le dan un aire moderno y de tendencia.\nIncluye bolsa de regalo Oreiro Love\n\n* Seguridad reforzada con cierre principal.\n* Triple divisorio interno para mantener tus pertenencias separadas y ordenada.\n* Correa de hombro ajustable para comodidad.\n* Asas de cuero que aportan un toque de sofisticación\n* Llavero decorativo de cadena desmontable que añade un toque chic.\n* Acabado de los herrajes: Níquel\n* Cierres reforzados\n* Zippers metálicos\n* Liviana y resistente',
+        priceTransfer: 'Consultar',
+        priceCard: 'Consultar',
+        colors: ['#c19f87', '#838383', '#bb201a'],
+        images: ['./assets/images/BM-014_1.jpg', './assets/images/BM-014_2.jpg', './assets/images/BM-014_3.jpg']
+      }
+    ,
+      {
+        sku: 'BA-010',
+        category: 'Billeteras y Accesorios',
+        categoryId: 'billeteras-y-accesorios',
+        name: 'Mochila Las Oreiro Relieve',
+        description: 'Medidas: 40 cm alto x 27 cm ancho x 13 cm profundidad\nTamaño 16"\n\n* Tela reforzada anti desgarre\n* Tiras ajustables y acolchadas Air Mesh\n* Asa superior reforzada\n* Espalda acolchonada\n* Bolsillo frontal con cierre, práctico y de fácil acceso\n* Compartimento interno porta notebook hasta 16”\n* Diseño con textura en relieve que aporta un look distintivo\n* Liviana y resistente, ideal para uso escolar, universitario o urbano\n* Capacidad de la mochila: 15 L.\n* Logo frontal Oreiro Love\n* Llavero decorativo\n* Cierres reforzados\n*  Zippers metálicos',
+        priceTransfer: 'Consultar',
+        priceCard: 'Consultar',
+        colors: ['#000000', '#a62733', '#66605a'],
+        images: ['./assets/images/BA-010_1.jpg', './assets/images/BA-010_2.jpg', './assets/images/BA-010_3.jpg']
+      }
+    ,
+      {
+        sku: 'BM-015',
+        category: 'Bolsos y Mochilas',
+        categoryId: 'bolsos-y-mochilas',
+        name: 'Mochila Táctica Alpine Skate',
+        description: 'Medidas: Alto 46cm x Ancho 30cm x Profundidad 23cm\nDiseño anatómico y aerodinámico\nModelo ultra liviano y fácil de transportar.\nTiras y espalda acolchada, para el cuidado de tus hombros.\nSeparador porta Notebook para dispositivos de hasta 15,6 pulgadas.\nDos bolsillos laterales porta botellas.\nLa Mochila ALPINESKATE es una opción ideal para aquellos que buscan alta calidad y durabilidad.',
+        priceTransfer: '32.650',
+        priceCard: '39.500',
+        colors: ['#000000'],
+        images: ['./assets/images/BM-015_1.jpg', './assets/images/BM-015_2.jpg', './assets/images/BM-015_3.jpg']
+      }
+    ,
+      {
+        sku: 'BM-016',
+        category: 'Bolsos y Mochilas',
+        categoryId: 'bolsos-y-mochilas',
+        name: 'Mochila Urbana Deportiva Everlast',
+        description: 'Tamaño 18" - Capacidad 16L\nMochila ideal para entrenamiento, estudio o uso urbano, con diseño robusto y excelente capacidad\nResistente para uso intensivo\n\n* Un asa de transporte reforzada.\n* Múltiples bolsillos frontales con cierre.\n* Dos bolsillos laterales de red, porta botella.\n* Tiras de espalda regulables acolchadas con tela Air Mesh que proporciona comodidad y ventilación durante su uso.\n* Cierres reforzados.\n* Zippers metálicos.\n* Portabotellas laterales.\n* Modelo Ultra Liviano y fácil de transportar.',
+        priceTransfer: 'Consultar',
+        priceCard: 'Consultar',
+        colors: ['#000000', '#525f37'],
+        images: ['./assets/images/BM-016_1.jpg', './assets/images/BM-016_2.png', './assets/images/BM-016_3.png']
+      }
+    ,
+      {
+        sku: 'BM-017',
+        category: 'Bolsos y Mochilas',
+        categoryId: 'bolsos-y-mochilas',
+        name: 'Mochila Urbana y Deportiva Everlast',
+        description: 'Medidas: 43 cm alto x 30 cm ancho x 14 cm profundidad \nMochila diseñada para quienes buscan resistencia, capacidad y comodidad en el uso diario, estudio o trabajo.\n\n\n* Asa superior reforzada.\n* Organizador interno y múltiples bolsillos que permiten llevar todo de forma ordenada. \n* Espalda acolchonada y tiras con tela mesh brindan mayor confort incluso en usos prolongados.\n* Bolsillo frontal con cierre.\n* Bolsillos laterales.\n* Compartimento porta notebook de hasta 17”.\n* Material resistente, ideal para uso intensivo.\n* Tela altamente reforzada anti desgarre.\n* Cierres reforzados.',
+        priceTransfer: 'Consultar',
+        priceCard: 'Consultar',
+        colors: ['#000000', '#184882'],
+        images: ['./assets/images/BM-017_1.jpg', './assets/images/BM-017_2.jpg', './assets/images/BM-017_3.jpg', './assets/images/BM-017_4.jpg']
+      }
+    ,
+      {
+        sku: 'BM-018',
+        category: 'Bolsos y Mochilas',
+        categoryId: 'bolsos-y-mochilas',
+        name: 'MOCHILA EVERLAST URBANA ESCOLAR UNIVERSITARIA',
+        description: 'Medidas: 44 cm alto x 31 cm ancho x 13 cm profundidad \nModelo Ultra Liviano y fácil de transportar.\nLa mochila Everlast es perfecta para estudiantes, profesionales y viajeros que buscan un accesorio versátil y de confianza.\n\n\n* Amplio compartimiento principal.\n* Compartimento especial para notebook para máxima protección.\n* Seis bolsillos para organización óptima.\n* Bolsillo frontal con cierre.\n* Dos bolsillos laterales de red para botellas.\n* Tiras ajustables Air Mesh.\n* Espalda acolchada Air Mesh.\n* Asa de transporte.\n* Cierres reforzados.\n* Etiqueta interna para datos personales.\n* Diseño urbano ideal para el día a día.\n\nLa mochila portanotebook Everlast es la elección ideal para quienes buscan funcionalidad y estilo en su día a día.',
+        priceTransfer: 'Consultar',
+        priceCard: 'Consultar',
+        colors: ['#000000', '#d9283e'],
+        images: ['./assets/images/BM-018_1.jpg', './assets/images/BM-018_2.jpg']
+      }
+    ,
+      {
+        sku: 'BM-019',
+        category: 'Bolsos y Mochilas',
+        categoryId: 'bolsos-y-mochilas',
+        name: 'MOCHILA URBANA BOCA DE PEZ EVERLAST - CON MONEDERO',
+        description: 'Medidas: 40 cm alto x 25 cm ancho x 17 cm profundidad \nCapacidad de la mochila: 17 L.\nPerfecta para uso Urbano, ligera y con gran capacidad de carga.\nAdecuada para estudiar, trabajar o pasear.\n\n* Apertura tipo Boca de Pez para fácil acceso.\n* Compartimiento amplio. Apta Laptop 15,6"\n* Tiras reforzadas, acolchadas y ajustables.\n* Asa superior con cincha de seguridad.\n* Bolsillo de seguridad en la espalda antirrobo.\n* Cierres metálicos reforzados para mayor resistencia.\n* Dos bolsillos abiertos laterales para botellas.\n* Pequeño Bolsillo interno con cierre\n* Dos bolsillos internos organizadores para pequeños objetos\n* Bolsillo frontal con cierre\n* Monedero a tono con gancho : 11 x 11cm',
+        priceTransfer: 'Consultar',
+        priceCard: 'Consultar',
+        colors: ['#847f85', '#024e48'],
+        images: ['./assets/images/BM-019_1.png', './assets/images/BM-019_2.png', './assets/images/BM-019_3.jpg', './assets/images/BM-019_4.png']
+      }
+    ,
+      {
+        sku: 'BM-020',
+        category: 'Bolsos y Mochilas',
+        categoryId: 'bolsos-y-mochilas',
+        name: 'MOCHILA URBANA BOCA DE PEZ EVERLAST  2',
+        description: 'Medidas: 41 cm alto x 26 cm ancho x 18 cm profundidad \nBolsillo trasero de Seguridad Anti Robo \nModelo Ultra Liviano y fácil de transportar\nSu diseño innovador y sus múltiples características te ofrecen la combinación perfecta de estilo, seguridad y funcionalidad.\n\n* Una división,amplia de gran capacidad.16"\n* Acolchada, para proteger tu espalda.\n* Bolsillo frontal con cierre.\n* TresbBolsillos internos (uno con cierre)\n* Dos bolsillos portabotellas.\n* Doble asa superior con broche para facilitar el transporte.\n* Tiras extensibles',
+        priceTransfer: 'Consultar',
+        priceCard: 'Consultar',
+        colors: ['#5c4109', '#7a1c2e'],
+        images: ['./assets/images/BM-020_1.jpg', './assets/images/BM-020_2.jpg', './assets/images/BM-020_3.jpg', './assets/images/BM-020_4.jpg']
+      }
+    ,
+      {
+        sku: 'BM-021',
+        category: 'Bolsos y Mochilas',
+        categoryId: 'bolsos-y-mochilas',
+        name: 'Morral Cartera Everlast',
+        description: 'Medidas: 21 cm alto x 23 cm ancho x 17 cm profundidad \nUn morral compacto, resistente y súper funcional, ideal para uso diario, gimnasio o viajes cortos.\nPodés usarlo al hombro, cruzado o como bolso de mano.\n\n* Material resistente y liviano.\n* Tira regulable y desmontables.\n* Asas de transporte superior con cincha de seguridad\n* Bolsillo frontal con cierre para acceso rápido.\n* Interior con organizador para mejor distribución.\n* Zippers metálicos\n* Cierres reforzados\n* Sistema de sujeción para valija.\n* Llavero desmontable incluido.',
+        priceTransfer: 'Consultar',
+        priceCard: 'Consultar',
+        colors: ['#000000'],
+        images: ['./assets/images/BM-021_1.jpg', './assets/images/BM-021_2.jpg', './assets/images/BM-021_3.jpg', './assets/images/BM-021_4.png']
+      }
+    ,
+      {
+        sku: 'BA-011',
+        category: 'Billeteras y Accesorios',
+        categoryId: 'billeteras-y-accesorios',
+        name: 'Cartera/Bolso Urbana Agarrate Catalina',
+        description: 'Medidas: 39cm de ancho x 27cm de alto x 13cm de profundidad\nTres compartimentos amplios con cierre\nCorreas cortas reforzadas,de hombro extensible y desmontable en Eco Cuero.\nMaterial vegano que respeta el medio ambiente.\n\n\n* Acabado de los herrajes: Níquel.\n* Bolsillo frontal con cierre para seguridad.\n* Correa de hombro ajustable y removible de cuero.\n* Cierres reforzados\n* Material resistente anti desgarre\n* Liviana y cómoda\n* Logo frontal Agarrate Catalina\n* Hidrorepelente\n* Ideal para tus salidas y paseos',
+        priceTransfer: '40.750',
+        priceCard: '49.300',
+        colors: ['#000000'],
+        images: ['./assets/images/BA-011_1.jpg', './assets/images/BA-011_2.jpg']
+      }
+    ,
+      {
+        sku: 'BM-022',
+        category: 'Bolsos y Mochilas',
+        categoryId: 'bolsos-y-mochilas',
+        name: 'Cartera Agarrate Catalina Urbana',
+        description: 'Medidas: Medidas: Alto 39cm x Ancho 41cm x Prof. 13cm\nCorrea de hombro ajustable y desmontable\nInterior forrado \nCierre Reforzado\nResistente y liviana\n\n\n* Amplio compartimiento principal\n* La más Segura, Ultra Liviana y Resistente \n* Diseño cómodo y a la moda, elegante ideal para tus salidas o paseos\n* Bolsillo interno organizador\n* Material reforzado anti-desgarre\n* Logo frontal Agarrate Catalina',
+        priceTransfer: '45.900',
+        priceCard: '37.960',
+        colors: ['#000000'],
+        images: ['./assets/images/BM-022_1.jpg', './assets/images/BM-022_2.jpg']
+      }
+    ,
+      {
+        sku: 'BM-023',
+        category: 'Bolsos y Mochilas',
+        categoryId: 'bolsos-y-mochilas',
+        name: 'CARTERA BANDOLERA AGARRATE CATALINA',
+        description: 'Medidas: 16 cm alto x 20 cm ancho x 11 cm profundidad \nBandolera ideal para el uso diario, con diseño moderno y múltiples compartimentos que la hacen práctica y funcional para llevar todo lo esencial.\nUsala cruzada o al hombro.\n\n* Doble compartimento principal con cierre reforzado.\n* Bolsillo frontal con tapa y broche magnético.\n* Bolsillo con cierre oculto tras la solapa frontal\n* Tiras al tono y regulables.\n* Bolsillo interno con cierre.\n* Cierres metálicos de alta calidad.\n* Correa regulable para mayor comodidad.\n* Modelo liviano y fácil de transportar.\n* Detalle de argolla frontal decorativa.\n* Logo estampado en la solapa.\n* Pensada para el trabajo, salidas casuales y urbanas.',
+        priceTransfer: 'Consultar',
+        priceCard: 'Consultar',
+        colors: ['#000000', '#f4192b', '#68544d'],
+        images: ['./assets/images/BM-023_1.jpg', './assets/images/BM-023_2.jpg', './assets/images/BM-023_3.jpg', './assets/images/BM-023_4.jpg', './assets/images/BM-023_5.jpg']
+      }
+    ];
+
+    // --- Editor: localStorage merge ---
+    function getEditedProducts() {
+      const saved = localStorage.getItem('magnolia_edits');
+      const edits = saved ? JSON.parse(saved) : {};
+      return products.map(p => {
+        if (edits[p.sku]) {
+          return { ...p, ...edits[p.sku] };
+        }
+        return p;
+      });
+    }
+
+    function renderProducts() {
+      const mergedProducts = getEditedProducts();
+      const container = document.getElementById('products-container');
+      const categoriesSet = new Set(mergedProducts.map(p => p.category));
+      let html = '';
+      
+      let alternator = 0;
+      categoriesSet.forEach(categoryName => {
+        const catProducts = mergedProducts.filter(p => p.category === categoryName);
+        const catId = catProducts[0].categoryId;
+        const bgColor = alternator % 2 === 0 ? 'bg-white' : 'bg-beige';
+        
+        let sectionHtml = `
+          <section id="${catId}" class="py-20 ${bgColor}">
+           <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+             <span class="font-heading text-sm tracking-[0.3em] text-burgundy/60 uppercase">Colección</span>
+             <h2 class="font-display text-4xl md:text-5xl text-burgundy mt-2 mb-4">${categoryName}</h2>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        `;
+        
+        catProducts.forEach(product => {
+          const productImages = product.images || (product.image ? [product.image] : []);
+          
+          const colorsHtml = product.colors.map(c => 
+            `<button class="swatch w-6 h-6 rounded-full border-2 border-white shadow-sm" style="background-color: ${c}"></button>`
+          ).join('');
+          
+          const cardBgColor = alternator % 2 === 0 ? 'bg-beige' : 'bg-white';
+          const innerBgColor = alternator % 2 === 0 ? 'bg-white' : 'bg-beige';
+
+          let imagesHtml = '';
+          if (productImages.length > 1) {
+            imagesHtml = `
+              <div class="swiper product-swiper w-full h-full">
+                <div class="swiper-wrapper">
+                  ${productImages.map(img => `<div class="swiper-slide bg-gradient-to-br from-burgundy/5 to-burgundy/15 flex items-center justify-center"><img src="${img}" alt="${product.name}" class="w-full h-full object-cover" loading="lazy"></div>`).join('')}
+                </div>
+                <div class="swiper-pagination"></div>
+              </div>
+            `;
+          } else if (productImages.length === 1) {
+            imagesHtml = `
+             <div class="product-image w-full h-full bg-gradient-to-br from-burgundy/5 to-burgundy/15 flex items-center justify-center">
+              <img src="${productImages[0]}" alt="${product.name}" class="w-full h-full object-cover" loading="lazy" decoding="async">
+             </div>
+            `;
+          } else {
+             imagesHtml = `
+             <div class="product-image w-full h-full bg-gradient-to-br from-burgundy/5 to-burgundy/15 flex items-center justify-center">
+              <span class="text-burgundy/40 text-sm">Sin imagen</span>
+             </div>
+            `;
+          }
+          
+          sectionHtml += `
+             <article class="product-card group ${cardBgColor} rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500">
+              <div class="relative overflow-hidden aspect-square rounded-t-2xl">
+                <button class="edit-btn" onclick="event.stopPropagation(); openEditModal('${product.sku}')" title="Editar producto">✏️</button>
+                 ${imagesHtml}
+              </div>
+              <div class="p-6">
+               <span class="text-xs text-burgundy/60 font-medium tracking-wider">SKU: ${product.sku}</span>
+               <h3 class="font-display text-xl text-burgundy mt-1 mb-3">${product.name}</h3>
+               <div class="flex gap-2 mb-4">
+                ${colorsHtml}
+               </div>
+               <div class="${innerBgColor} rounded-xl p-4 mb-4">
+                <div class="flex items-baseline justify-between mb-1">
+                 <span class="text-xs text-gray-500 uppercase tracking-wide">Transf.</span> <span class="text-2xl font-bold text-burgundy price-transfer">${product.priceTransfer}</span>
+                </div>
+                <div class="flex items-baseline justify-between">
+                 <span class="text-xs text-gray-500 uppercase tracking-wide">Tarjeta</span> <span class="text-lg text-gray-500">${product.priceCard}</span>
+                </div>
+               </div>
+               <div class="flex gap-2">
+                <button onclick="openWhatsApp('${product.sku}', '${product.name}', '')" class="flex-1 btn-whatsapp text-white py-3 rounded-xl text-sm font-medium flex items-center justify-center gap-2 min-h-[44px]">
+                 <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg> Pedir
+                </button> 
+                <button onclick="openModalBySku('${product.sku}')" class="px-4 py-3 border-2 border-burgundy text-burgundy rounded-xl text-sm font-medium hover:bg-burgundy hover:text-white transition min-h-[44px]"> Ver más </button>
+               </div>
+              </div>
+             </article>
+          `;
+        });
+        
+        sectionHtml += `
+            </div>
+           </div>
+          </section>
+        `;
+        html += sectionHtml;
+        alternator++;
+      });
+      
+      container.innerHTML = html;
+      
+      // Initialize swiper instances for product cards
+      new Swiper('.product-swiper', {
+        loop: true,
+        pagination: {
+          el: '.swiper-pagination',
+          clickable: true,
+        },
+      });
+    }
+    
+    // Call render once everything is ready
+    document.addEventListener('DOMContentLoaded', renderProducts);
+
+    let modalQty = 1;
+    let currentModalData = {};
+    let modalSwiper = null;
+
+    function getWhatsAppNumber() {
+      return defaultConfig.whatsapp_number;
+    }
+
+    function openWhatsApp(sku, name, color) {
+      const msg = encodeURIComponent(`Hola Magnolia Chic! 🌸 Quiero este producto:\n\n✨ ${name}\n📦 SKU: ${sku}\n🎨 Color: ${color || 'A consultar'}\n\n¿Tienen stock? Quedo a la espera de info sobre medios de pago y envío. ¡Gracias!`);
+      window.open(`https://wa.me/${getWhatsAppNumber()}?text=${msg}`, '_blank');
+    }
+
+    function openModalBySku(sku) {
+      const mergedProducts = getEditedProducts();
+      const product = mergedProducts.find(p => p.sku === sku);
+      if (!product) return;
+      const productImages = product.images || (product.image ? [product.image] : []);
+      openModal(sku, product.name, product.description || '', product.priceTransfer, product.priceCard, product.colors, productImages);
+    }
+
+    function openModal(sku, name, desc, priceTransfer, priceCard, colors, images) {
+      currentModalData = { sku, name, desc, priceTransfer, priceCard, colors };
+      modalQty = 1;
+      
+      document.getElementById('modal-sku').textContent = `SKU: ${sku}`;
+      document.getElementById('modal-name').textContent = name;
+      document.getElementById('modal-desc').textContent = desc;
+      document.getElementById('modal-price-transfer').textContent = priceTransfer;
+      document.getElementById('modal-price-card').textContent = priceCard;
+      document.getElementById('modal-qty').textContent = modalQty;
+      
+      const wrapperElement = document.getElementById('modal-image-wrapper');
+      
+      // Clean previous slides
+      wrapperElement.innerHTML = '';
+      
+      if (images && images.length > 0) {
+        images.forEach(img => {
+          wrapperElement.innerHTML += `<div class="swiper-slide w-full h-full flex items-center justify-center"><img src="${img}" class="w-full h-full object-cover"></div>`;
+        });
+      } else {
+        wrapperElement.innerHTML = `<div class="swiper-slide w-full h-full flex items-center justify-center"><svg class="w-32 h-32 text-burgundy/40" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg></div>`;
+      }
+      
+      const colorsContainer = document.getElementById('modal-colors');
+      colorsContainer.innerHTML = colors.map(c => 
+        `<button class="swatch w-8 h-8 rounded-full border-2 border-white shadow-md" style="background-color: ${c}" title="${c}"></button>`
+      ).join('');
+      
+      document.getElementById('product-modal').classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+      
+      // Init or update swiper for modal
+      if(modalSwiper !== null) modalSwiper.destroy();
+      modalSwiper = new Swiper('.modal-swiper', {
+        loop: images.length > 1,
+        pagination: {
+          el: '.swiper-pagination',
+          clickable: true,
+        },
+        navigation: {
+          nextEl: '.swiper-button-next',
+          prevEl: '.swiper-button-prev',
+        },
+      });
+    }
+
+    function closeModal() {
+      document.getElementById('product-modal').classList.add('hidden');
+      document.body.style.overflow = '';
+    }
+
+    function changeQty(delta) {
+      modalQty = Math.max(1, modalQty + delta);
+      document.getElementById('modal-qty').textContent = modalQty;
+    }
+
+    function orderFromModal() {
+      const { sku, name, colors } = currentModalData;
+      const color = colors[0] ? 'a consultar' : 'a consultar';
+      const msg = encodeURIComponent(`Hola Magnolia Chic! 🌸 Quiero hacer un pedido:\n\n✨ Producto: ${name}\n📦 SKU: ${sku}\n🔢 Cantidad: ${modalQty}\n🎨 Color: ${color}\n\nPor favor confirmame si hay stock, ¡gracias!`);
+      window.open(`https://wa.me/${getWhatsAppNumber()}?text=${msg}`, '_blank');
+    }
+
+    function toggleMobileMenu() {
+      const menu = document.getElementById('mobile-menu');
+      menu.classList.toggle('hidden');
+      menu.classList.toggle('flex');
+      document.body.style.overflow = menu.classList.contains('hidden') ? '' : 'hidden';
+    }
+
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        closeModal();
+        const mobileMenu = document.getElementById('mobile-menu');
+        if (!mobileMenu.classList.contains('hidden')) {
+          toggleMobileMenu();
+        }
+      }
+    });
+
+    document.getElementById('product-modal').addEventListener('click', function(e) {
+      if (e.target === this) closeModal();
+    });
+
+    // ====== PRODUCT EDITOR ======
+    let editImages = []; // array of data URLs or paths for the currently editing product
+
+    function openEditModal(sku) {
+      const mergedProducts = getEditedProducts();
+      const product = mergedProducts.find(p => p.sku === sku);
+      if (!product) return;
+
+      document.getElementById('edit-sku').value = sku;
+      document.getElementById('edit-name').value = product.name || '';
+      document.getElementById('edit-desc').value = (product.description || '').replace(/\\n/g, '\n');
+      document.getElementById('edit-price-transfer').value = product.priceTransfer || '';
+      document.getElementById('edit-price-card').value = product.priceCard || '';
+      document.getElementById('edit-colors').value = (product.colors || []).join(', ');
+      
+      // Preview colors
+      updateColorPreview();
+
+      // Load images
+      editImages = product.images ? [...product.images] : (product.image ? [product.image] : []);
+      renderEditImages();
+
+      document.getElementById('edit-mode').value = 'edit';
+      document.getElementById('edit-category-field').style.display = 'block';
+      // Set the category dropdown to the current product's category
+      document.getElementById('edit-category').value = product.category || 'Billeteras y Accesorios';
+      document.getElementById('edit-reset-container').style.display = 'block';
+      document.getElementById('edit-modal-title').textContent = 'Editar Producto';
+
+      document.getElementById('edit-modal').classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeEditModal() {
+      document.getElementById('edit-modal').classList.add('hidden');
+      document.body.style.overflow = '';
+    }
+
+    function updateColorPreview() {
+      const input = document.getElementById('edit-colors').value;
+      const colors = input.split(',').map(c => c.trim()).filter(c => c);
+      const preview = document.getElementById('edit-colors-preview');
+      preview.innerHTML = colors.map(c => 
+        `<div style="width:28px;height:28px;border-radius:50%;background:${c};border:2px solid #ddd"></div>`
+      ).join('');
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const colorsInput = document.getElementById('edit-colors');
+      if (colorsInput) colorsInput.addEventListener('input', updateColorPreview);
+    });
+
+    function renderEditImages() {
+      const grid = document.getElementById('edit-images-grid');
+      let html = '';
+      editImages.forEach((img, i) => {
+        html += `
+          <div class="edit-img-thumb">
+            <img src="${img}" alt="Imagen ${i+1}">
+            <button class="remove-img" onclick="removeEditImage(${i})" title="Eliminar imagen">✕</button>
+          </div>`;
+      });
+      html += `
+        <div class="edit-img-add" onclick="document.getElementById('edit-file-input').click()">
+          <span style="font-size:28px">+</span>
+          <span>Agregar foto</span>
+        </div>`;
+      grid.innerHTML = html;
+      // Ensure file input exists
+      if (!document.getElementById('edit-file-input')) {
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.id = 'edit-file-input';
+        input.accept = 'image/*';
+        input.multiple = true;
+        input.style.display = 'none';
+        input.addEventListener('change', handleImageUpload);
+        document.body.appendChild(input);
+      }
+    }
+
+    function removeEditImage(index) {
+      editImages.splice(index, 1);
+      renderEditImages();
+    }
+
+    function handleImageUpload(e) {
+      const files = e.target.files;
+      if (!files.length) return;
+      
+      Array.from(files).forEach(file => {
+        const reader = new FileReader();
+        reader.onload = function(ev) {
+          editImages.push(ev.target.result);
+          renderEditImages();
+        };
+        reader.readAsDataURL(file);
+      });
+      e.target.value = ''; // reset so same file can be selected again
+    }
+
+    async function saveProduct() {
+      const mode = document.getElementById('edit-mode').value;
+      let sku = document.getElementById('edit-sku').value;
+      const name = document.getElementById('edit-name').value.trim();
+      const description = document.getElementById('edit-desc').value.trim();
+      const priceTransfer = document.getElementById('edit-price-transfer').value.trim();
+      const priceCard = document.getElementById('edit-price-card').value.trim();
+      const colorsStr = document.getElementById('edit-colors').value;
+      const colors = colorsStr.split(',').map(c => c.trim()).filter(c => c);
+      const category = document.getElementById('edit-category').value;
+
+      if (!name) { alert('\u26a0\ufe0f El nombre del producto es obligatorio'); return; }
+
+      // For new products, generate SKU
+      if (mode === 'new') {
+        const catPrefix = { 'Billeteras y Accesorios': 'BA', 'Bolsos y Mochilas': 'BM', 'Sombreros y Gorras': 'SG' };
+        const prefix = catPrefix[category] || 'XX';
+        const existing = getEditedProducts().filter(p => p.sku.startsWith(prefix));
+        const maxNum = existing.reduce((max, p) => {
+          const num = parseInt(p.sku.split('-')[1]) || 0;
+          return num > max ? num : max;
+        }, 0);
+        sku = `${prefix}-${String(maxNum + 1).padStart(3, '0')}`;
+      }
+
+      // Disable button while saving
+      const saveBtn = document.querySelector('.edit-save-btn');
+      saveBtn.textContent = '\u23f3 Guardando...';
+      saveBtn.disabled = true;
+
+      try {
+        // 1. Upload any new images (base64 data URLs) as real files
+        const finalImages = [];
+        let imgCounter = 1;
+        for (const img of editImages) {
+          if (img.startsWith('data:')) {
+            const ext = img.match(/^data:image\/(\w+);/) ? img.match(/^data:image\/(\w+);/)[1] : 'jpg';
+            const filename = `${sku}_${imgCounter}.${ext === 'jpeg' ? 'jpg' : ext}`;
+            const resp = await fetch('/api/upload-image', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ filename, data: img })
+            });
+            const result = await resp.json();
+            if (result.ok) {
+              finalImages.push(result.path);
+              console.log('\ud83d\udcf8 Image saved: ' + filename);
+            } else {
+              throw new Error('Error uploading ' + filename + ': ' + result.error);
+            }
+          } else {
+            finalImages.push(img);
+          }
+          imgCounter++;
+        }
+
+        // 2. Save product data
+        const endpoint = mode === 'new' ? '/api/add-product' : '/api/save-product';
+        const catIdMap = { 'Billeteras y Accesorios': 'billeteras-y-accesorios', 'Bolsos y Mochilas': 'bolsos-y-mochilas', 'Sombreros y Gorras': 'sombreros-y-gorras' };
+        const body = {
+          sku, name, description, priceTransfer, priceCard, colors,
+          images: finalImages,
+          category: category,
+          categoryId: catIdMap[category] || 'otros'
+        };
+
+        const resp = await fetch(endpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body)
+        });
+        const result = await resp.json();
+
+        if (result.ok) {
+          closeEditModal();
+          if (mode === 'new') {
+            alert('\u2705 \u00a1Producto creado! SKU: ' + sku + '. Recargando p\u00e1gina...');
+            location.reload();
+          } else {
+            const saved = localStorage.getItem('magnolia_edits');
+            const edits = saved ? JSON.parse(saved) : {};
+            edits[sku] = { name, description, priceTransfer, priceCard, colors, images: finalImages, category: category, categoryId: catIdMap[category] || 'otros' };
+            localStorage.setItem('magnolia_edits', JSON.stringify(edits));
+            renderProducts();
+            alert('\u2705 \u00a1Producto guardado! Los cambios quedaron en el archivo index.html.');
+          }
+        } else {
+          throw new Error(result.error);
+        }
+      } catch (e) {
+        alert('\u274c Error al guardar: ' + e.message);
+        console.error(e);
+      } finally {
+        saveBtn.textContent = '\ud83d\udcbe Guardar Cambios';
+        saveBtn.disabled = false;
+      }
+    }
+
+    function resetProduct() {
+      const sku = document.getElementById('edit-sku').value;
+      if (!confirm('\u00bfEst\u00e1s seguro de restaurar este producto? Se perder\u00e1n los cambios del editor.')) return;
+
+      const saved = localStorage.getItem('magnolia_edits');
+      const edits = saved ? JSON.parse(saved) : {};
+      delete edits[sku];
+      localStorage.setItem('magnolia_edits', JSON.stringify(edits));
+
+      closeEditModal();
+      renderProducts();
+      alert('Producto restaurado.');
+    }
+
+    // Close edit modal on backdrop click
+    document.getElementById('edit-modal').addEventListener('click', function(e) {
+      if (e.target === this) closeEditModal();
+    });
+
+    // ====== NEW PRODUCT ======
+    function openNewProductModal() {
+      document.getElementById('edit-modal-title').textContent = 'Nuevo Producto';
+      document.getElementById('edit-mode').value = 'new';
+      document.getElementById('edit-sku').value = '';
+      document.getElementById('edit-name').value = '';
+      document.getElementById('edit-desc').value = '';
+      document.getElementById('edit-price-transfer').value = '';
+      document.getElementById('edit-price-card').value = '';
+      document.getElementById('edit-colors').value = '#000000';
+      document.getElementById('edit-category-field').style.display = 'block';
+      document.getElementById('edit-reset-container').style.display = 'none';
+      updateColorPreview();
+      editImages = [];
+      renderEditImages();
+      document.getElementById('edit-modal').classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+    }
+  </script>
+ </body>
+</html>
