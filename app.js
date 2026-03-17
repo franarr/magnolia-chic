@@ -22,6 +22,7 @@ const productsContainer = document.getElementById('products-container');
 const loginModal = document.getElementById('login-modal');
 const editModal = document.getElementById('edit-modal');
 const btnDoLogin = document.getElementById('btn-do-login');
+const btnAddProduct = document.getElementById('btn-add-product');
 
 // --- Real-time Products Sync ---
 onSnapshot(collection(db, "products"), (snapshot) => {
@@ -33,6 +34,7 @@ onSnapshot(collection(db, "products"), (snapshot) => {
 onAuthStateChanged(auth, (user) => {
     isAdmin = !!user;
     document.body.classList.toggle('is-admin', isAdmin);
+    if (btnAddProduct) btnAddProduct.classList.toggle('hidden', !isAdmin);
     renderProducts(); // Re-render to show/hide edit buttons
 });
 
