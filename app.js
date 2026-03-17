@@ -10,6 +10,9 @@ const db = getFirestore(app);
 const auth = getAuth(app);
 const storage = getStorage(app);
 
+// ImgBB Config (Free Image Hosting alternative)
+const IMGBB_API_KEY = "14a67838d94e610b36611cb094ba1b3e";
+
 // Global State
 let products = [];
 let isAdmin = false;
@@ -290,10 +293,27 @@ window.saveProduct = async () => {
         for (let i = 0; i < editImages.length; i++) {
             const img = editImages[i];
             if (img.startsWith('data:')) {
-                const blob = await (await fetch(img)).blob();
-                const fileRef = ref(storage, `products/${sku}_${i}.${blob.type.split('/')[1]}`);
-                await uploadBytes(fileRef, blob);
-                finalImages.push(await getDownloadURL(fileRef));
+                // Upload to ImgBB
+                const base64Data = img.split(',')[1];
+                const formData = new FormData();
+                formData.append('image', base64Data);
+                
+                try {
+                    const response = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, {
+                        method: 'POST',
+                        body: formData
+                    });
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        finalImages.push(result.data.url);
+                    } else {
+                        throw new Error(result.error ? result.error.message : "Error desconocido en ImgBB");
+                    }
+                } catch (err) {
+                    console.error("Error subiendo a ImgBB:", err);
+                    throw new Error("No se pudo subir la imagen: " + err.message);
+                }
             } else {
                 finalImages.push(img);
             }
