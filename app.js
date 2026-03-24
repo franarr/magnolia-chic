@@ -16,6 +16,7 @@ const IMGBB_API_KEY = "14a67838d94e610b36611cb094ba1b3e";
 // Global State
 let products = [];
 let isAdmin = false;
+let activeGenderFilter = 'Todos';
 
 // --- DOM Elements ---
 const productsContainer = document.getElementById('products-container');
@@ -35,8 +36,22 @@ onAuthStateChanged(auth, (user) => {
     isAdmin = !!user;
     document.body.classList.toggle('is-admin', isAdmin);
     if (btnAddProduct) btnAddProduct.classList.toggle('hidden', !isAdmin);
+    // Show/hide filter bar is always visible to everyone
     renderProducts(); // Re-render to show/hide edit buttons
+    if (isAdmin && window.location.hash === '#admin') {
+        // Clean hash after successful login
+        history.replaceState(null, '', window.location.pathname);
+    }
 });
+
+// --- Hidden Admin Access via #admin ---
+function checkAdminHash() {
+    if (window.location.hash === '#admin' && !isAdmin) {
+        loginModal.classList.remove('hidden');
+    }
+}
+checkAdminHash();
+window.addEventListener('hashchange', checkAdminHash);
 
 window.showLogin = () => loginModal.classList.remove('hidden');
 window.closeLoginModal = () => loginModal.classList.add('hidden');
@@ -47,6 +62,8 @@ btnDoLogin.onclick = async () => {
     try {
         await signInWithEmailAndPassword(auth, email, pass);
         window.closeLoginModal();
+        // Clean hash so admin URL is not visible
+        history.replaceState(null, '', window.location.pathname);
     } catch (e) {
         alert("Error de acceso: " + e.message);
     }
@@ -54,17 +71,36 @@ btnDoLogin.onclick = async () => {
 
 window.doLogout = () => signOut(auth);
 
+// --- Gender Filter ---
+window.filterByGender = (gender) => {
+    activeGenderFilter = gender;
+    // Update active button
+    document.querySelectorAll('.filter-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.textContent.includes(gender === 'Todos' ? 'Todos' : gender));
+    });
+    renderProducts();
+};
+
 // --- Rendering Logic ---
 function renderProducts() {
     if (!productsContainer) return;
     
+    // Apply gender filter
+    let filteredProducts = products;
+    if (activeGenderFilter !== 'Todos') {
+        filteredProducts = products.filter(p => p.gender === activeGenderFilter);
+    }
+
     // Group products by category
-    const categoriesSet = new Set(products.map(p => p.category));
+    const categoriesSet = new Set(filteredProducts.map(p => p.category));
     let html = '';
     let alternator = 0;
 
     categoriesSet.forEach(categoryName => {
-        const catProducts = products.filter(p => p.category === categoryName);
+        let catProducts = filteredProducts.filter(p => p.category === categoryName);
+        // Sort by order field (lower = first)
+        catProducts.sort((a, b) => (a.order || 0) - (b.order || 0));
+        
         const catId = catProducts[0].categoryId;
         const bgColor = alternator % 2 === 0 ? 'bg-white' : 'bg-beige';
         
@@ -78,7 +114,7 @@ function renderProducts() {
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         `;
         
-        catProducts.forEach(product => {
+        catProducts.forEach((product, idx) => {
           const productImages = product.images || [];
           const colorsHtml = (product.colors || []).map(c => 
             `<button class="swatch w-6 h-6 rounded-full border-2 border-white shadow-sm" style="background-color: ${c}"></button>`
@@ -86,6 +122,11 @@ function renderProducts() {
           
           const cardBgColor = alternator % 2 === 0 ? 'bg-beige' : 'bg-white';
           const innerBgColor = alternator % 2 === 0 ? 'bg-white' : 'bg-beige';
+
+          // Gender badge
+          const gender = product.gender || 'Unisex';
+          const genderClass = gender.toLowerCase();
+          const genderBadge = `<span class="gender-badge ${genderClass}">${gender}</span>`;
 
           let imagesHtml = '';
           if (productImages.length > 1) {
@@ -102,15 +143,27 @@ function renderProducts() {
           } else {
             imagesHtml = `<div class="product-image w-full h-full bg-gradient-to-br from-burgundy/5 to-burgundy/15 flex items-center justify-center"><span class="text-burgundy/40 text-sm">Sin imagen</span></div>`;
           }
+
+          // Admin order arrows
+          const orderArrowsHtml = isAdmin ? `
+            <div class="order-arrows">
+              <button class="order-arrow" onclick="event.stopPropagation(); moveProduct('${product.sku}', -1)" title="Mover arriba">↑</button>
+              <button class="order-arrow" onclick="event.stopPropagation(); moveProduct('${product.sku}', 1)" title="Mover abajo">↓</button>
+            </div>
+          ` : '';
           
           sectionHtml += `
              <article class="product-card group ${cardBgColor} rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500">
               <div class="relative overflow-hidden aspect-square rounded-t-2xl">
                  ${isAdmin ? `<button class="edit-btn" onclick="event.stopPropagation(); openEditModal('${product.sku}')">✏️</button>` : ''}
+                 ${orderArrowsHtml}
                  ${imagesHtml}
               </div>
               <div class="p-6">
-               <span class="text-xs text-burgundy/60 font-medium tracking-wider">SKU: ${product.sku}</span>
+               <div class="flex items-center gap-2 mb-1">
+                <span class="text-xs text-burgundy/60 font-medium tracking-wider">SKU: ${product.sku}</span>
+                ${genderBadge}
+               </div>
                <h3 class="font-display text-xl text-burgundy mt-1 mb-3">${product.name}</h3>
                <div class="flex gap-2 mb-4">${colorsHtml}</div>
                <div class="${innerBgColor} rounded-xl p-4 mb-4">
@@ -138,6 +191,59 @@ function renderProducts() {
     productsContainer.innerHTML = html;
     new Swiper('.product-swiper', { loop: true, pagination: { el: '.swiper-pagination', clickable: true } });
 }
+
+// --- Product Reordering ---
+window.moveProduct = async (sku, direction) => {
+    const product = products.find(p => p.sku === sku);
+    if (!product) return;
+
+    // Get products in same category, sorted by order
+    const catProducts = products
+        .filter(p => p.category === product.category)
+        .sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+    
+    // Ensure all products have distinct, sequential order values
+    // (fixes the case where all products start with order=0 or undefined)
+    const needsInit = catProducts.every(p => (p.order ?? 0) === (catProducts[0].order ?? 0));
+    if (needsInit) {
+        for (let i = 0; i < catProducts.length; i++) {
+            catProducts[i].order = i;
+        }
+        // Save all initial orders to Firestore
+        try {
+            for (const p of catProducts) {
+                const data = { ...p };
+                delete data.id;
+                await setDoc(doc(db, "products", p.sku), data);
+            }
+        } catch (e) {
+            console.error("Error initializing order:", e);
+        }
+    }
+
+    const currentIdx = catProducts.findIndex(p => p.sku === sku);
+    const targetIdx = currentIdx + direction;
+    
+    if (targetIdx < 0 || targetIdx >= catProducts.length) return; // already at edge
+    
+    const targetProduct = catProducts[targetIdx];
+    
+    // Swap order values
+    const currentOrder = product.order ?? currentIdx;
+    const targetOrder = targetProduct.order ?? targetIdx;
+    
+    try {
+        const productData = { ...product, order: targetOrder };
+        delete productData.id;
+        const targetData = { ...targetProduct, order: currentOrder };
+        delete targetData.id;
+        
+        await setDoc(doc(db, "products", product.sku), productData);
+        await setDoc(doc(db, "products", targetProduct.sku), targetData);
+    } catch (e) {
+        alert("Error al reordenar: " + e.message);
+    }
+};
 
 // --- Modals Logic ---
 let modalQty = 1;
@@ -193,6 +299,7 @@ window.orderFromModal = () => {
 
 // --- Admin Editor ---
 let editImages = [];
+let dragSrcIndex = null;
 
 window.openEditModal = (sku) => {
     const product = products.find(p => p.sku === sku);
@@ -205,6 +312,7 @@ window.openEditModal = (sku) => {
     document.getElementById('edit-price-card').value = product.priceCard;
     document.getElementById('edit-colors').value = (product.colors || []).join(', ');
     document.getElementById('edit-category').value = product.category;
+    document.getElementById('edit-gender').value = product.gender || 'Unisex';
     
     editImages = [...(product.images || [])];
     renderEditImages();
@@ -229,6 +337,7 @@ window.openNewProductModal = () => {
     document.getElementById('edit-price-transfer').value = '';
     document.getElementById('edit-price-card').value = '';
     document.getElementById('edit-colors').value = '#000000';
+    document.getElementById('edit-gender').value = 'Unisex';
     
     editImages = [];
     renderEditImages();
@@ -241,14 +350,64 @@ window.openNewProductModal = () => {
     document.body.style.overflow = 'hidden';
 };
 
+// --- Drag & Drop Image Reordering ---
 function renderEditImages() {
     const grid = document.getElementById('edit-images-grid');
     grid.innerHTML = editImages.map((img, i) => `
-        <div class="edit-img-thumb">
+        <div class="edit-img-thumb" draggable="true" data-index="${i}">
             <img src="${img}">
             <button class="remove-img" onclick="removeEditImage(${i})">✕</button>
         </div>`).join('') + `
         <div class="edit-img-add" onclick="document.getElementById('edit-file-input').click()"><span>+</span></div>`;
+    
+    // Attach drag & drop listeners to each thumb
+    grid.querySelectorAll('.edit-img-thumb[draggable]').forEach(thumb => {
+        thumb.addEventListener('dragstart', handleDragStart);
+        thumb.addEventListener('dragover', handleDragOver);
+        thumb.addEventListener('dragenter', handleDragEnter);
+        thumb.addEventListener('dragleave', handleDragLeave);
+        thumb.addEventListener('drop', handleDrop);
+        thumb.addEventListener('dragend', handleDragEnd);
+    });
+}
+
+function handleDragStart(e) {
+    dragSrcIndex = parseInt(e.currentTarget.dataset.index);
+    e.currentTarget.classList.add('dragging');
+    e.dataTransfer.effectAllowed = 'move';
+}
+
+function handleDragOver(e) {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+}
+
+function handleDragEnter(e) {
+    e.preventDefault();
+    e.currentTarget.classList.add('drag-over');
+}
+
+function handleDragLeave(e) {
+    e.currentTarget.classList.remove('drag-over');
+}
+
+function handleDrop(e) {
+    e.preventDefault();
+    const targetIndex = parseInt(e.currentTarget.dataset.index);
+    e.currentTarget.classList.remove('drag-over');
+    
+    if (dragSrcIndex !== null && dragSrcIndex !== targetIndex) {
+        // Swap images in array
+        const movedImg = editImages.splice(dragSrcIndex, 1)[0];
+        editImages.splice(targetIndex, 0, movedImg);
+        renderEditImages();
+    }
+}
+
+function handleDragEnd(e) {
+    e.currentTarget.classList.remove('dragging');
+    document.querySelectorAll('.edit-img-thumb').forEach(el => el.classList.remove('drag-over'));
+    dragSrcIndex = null;
 }
 
 window.removeEditImage = (i) => { editImages.splice(i, 1); renderEditImages(); };
@@ -276,6 +435,7 @@ window.saveProduct = async () => {
     let sku = document.getElementById('edit-sku').value;
     const name = document.getElementById('edit-name').value;
     const category = document.getElementById('edit-category').value;
+    const gender = document.getElementById('edit-gender').value;
     const saveBtn = document.querySelector('.edit-save-btn');
     
     if (!name) return alert("Nombre obligatorio");
@@ -322,14 +482,26 @@ window.saveProduct = async () => {
         }
 
         const catIdMap = { 'Billeteras y Accesorios': 'billeteras-y-accesorios', 'Bolsos y Mochilas': 'bolsos-y-mochilas', 'Sombreros y Gorras': 'sombreros-y-gorras' };
+        
+        // Get current order or assign next order for new products
+        let order = 0;
+        if (mode === 'new') {
+            const catProducts = products.filter(p => p.category === category);
+            order = catProducts.length > 0 ? Math.max(...catProducts.map(p => p.order || 0)) + 1 : 0;
+        } else {
+            const existing = products.find(p => p.sku === sku);
+            order = existing?.order || 0;
+        }
+
         const productData = {
-            sku, name,
+            sku, name, gender,
             category, categoryId: catIdMap[category],
             description: document.getElementById('edit-desc').value,
             priceTransfer: document.getElementById('edit-price-transfer').value,
             priceCard: document.getElementById('edit-price-card').value,
             colors: document.getElementById('edit-colors').value.split(',').map(c => c.trim()).filter(c => c),
-            images: finalImages
+            images: finalImages,
+            order
         };
 
         await setDoc(doc(db, "products", sku), productData);

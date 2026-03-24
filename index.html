@@ -96,8 +96,10 @@
     #edit-modal label { display: block; font-size: 12px; font-weight: 600; color: #555; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
     .edit-field { margin-bottom: 16px; }
     .edit-images-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(100px, 1fr)); gap: 8px; margin-top: 8px; }
-    .edit-img-thumb { position: relative; aspect-ratio: 1; border-radius: 8px; overflow: hidden; border: 2px solid #ddd; }
-    .edit-img-thumb img { width: 100%; height: 100%; object-fit: cover; }
+    .edit-img-thumb { position: relative; aspect-ratio: 1; border-radius: 8px; overflow: hidden; border: 2px solid #ddd; cursor: grab; transition: opacity 0.2s, border-color 0.2s; }
+    .edit-img-thumb.dragging { opacity: 0.4; border-color: #6F1D1B; }
+    .edit-img-thumb.drag-over { border-color: #6F1D1B; border-style: dashed; transform: scale(1.05); }
+    .edit-img-thumb img { width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
     .edit-img-thumb .remove-img { position: absolute; top: 2px; right: 2px; width: 22px; height: 22px; background: rgba(220,38,38,0.9); color: white; border: none; border-radius: 50%; cursor: pointer; font-size: 14px; line-height: 1; display: flex; align-items: center; justify-content: center; }
     .edit-img-add { aspect-ratio: 1; border: 2px dashed #ccc; border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer; color: #999; transition: all 0.2s; font-size: 12px; }
     .edit-img-add:hover { border-color: #6F1D1B; color: #6F1D1B; }
@@ -109,6 +111,19 @@
     .edit-color-swatch:hover .remove-color { display: flex; }
     .edit-reset-btn { background: transparent; color: #999; border: 1px solid #ddd; padding: 10px 20px; border-radius: 8px; font-size: 13px; cursor: pointer; margin-top: 8px; }
     .edit-reset-btn:hover { border-color: #dc2626; color: #dc2626; }
+    /* Gender Badge */
+    .gender-badge { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 10px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; }
+    .gender-badge.mujer { background: #fce4ec; color: #c62828; }
+    .gender-badge.hombre { background: #e3f2fd; color: #1565c0; }
+    .gender-badge.unisex { background: #f3e5f5; color: #7b1fa2; }
+    /* Filter Bar */
+    .filter-bar { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-bottom: 12px; }
+    .filter-btn { padding: 8px 20px; border-radius: 25px; border: 2px solid #6F1D1B; background: transparent; color: #6F1D1B; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.25s; font-family: 'Montserrat', sans-serif; letter-spacing: 0.5px; }
+    .filter-btn:hover, .filter-btn.active { background: #6F1D1B; color: white; }
+    /* Admin Order Arrows */
+    .order-arrows { position: absolute; top: 8px; left: 8px; z-index: 10; display: flex; flex-direction: column; gap: 4px; }
+    .order-arrow { width: 30px; height: 30px; background: rgba(255,255,255,0.9); border-radius: 50%; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px; color: #6F1D1B; box-shadow: 0 2px 8px rgba(0,0,0,0.15); transition: all 0.2s; }
+    .order-arrow:hover { background: #6F1D1B; color: white; transform: scale(1.1); }
     /* Custom Scrollbar */
     .custom-scrollbar::-webkit-scrollbar { width: 4px; }
     .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
@@ -209,6 +224,14 @@
         </select>
        </div>
        <div class="edit-field">
+        <label>Género</label>
+        <select id="edit-gender" style="padding:10px 12px;border:1px solid #ddd;border-radius:8px;font-size:14px;width:100%">
+         <option value="Unisex">Unisex</option>
+         <option value="Mujer">Mujer</option>
+         <option value="Hombre">Hombre</option>
+        </select>
+       </div>
+       <div class="edit-field">
         <label>Nombre del producto</label>
         <input type="text" id="edit-name" placeholder="Ej: Bolso de Playa Trendy">
        </div>
@@ -296,8 +319,17 @@
      </div>
     </div>
    </section>
-   
-   <div id="products-container"></div>
+
+    <!-- Gender Filter Bar -->
+    <div id="gender-filter-bar" class="sticky top-16 md:top-20 z-30 bg-white/95 backdrop-blur-md border-b border-beige-dark py-3 px-4">
+     <div class="filter-bar">
+      <button class="filter-btn active" onclick="filterByGender('Todos')">Todos</button>
+      <button class="filter-btn" onclick="filterByGender('Mujer')">👩 Mujer</button>
+      <button class="filter-btn" onclick="filterByGender('Hombre')">👨 Hombre</button>
+     </div>
+    </div>
+    
+    <div id="products-container"></div>
 
    <!-- Contact CTA Section -->
    <section id="contacto" class="py-24 bg-beige text-center border-t border-beige-dark">
@@ -324,7 +356,7 @@
      </p>
      <hr class="w-24 border-white/10 my-2">
      <p class="text-xs text-white/40 tracking-wider">© 2026 Magnolia Chic. Todos los derechos reservados.</p>
-     <button onclick="showLogin()" class="text-[10px] text-white/20 hover:text-white/60 mt-4 transition-colors">Acceso Admin</button>
+      <!-- Admin access hidden: use #admin in URL -->
     </div>
    </footer>
    <a id="floating-whatsapp" href="https://wa.me/5493425977934" target="_blank" rel="noopener noreferrer" class="fixed bottom-6 right-6 btn-whatsapp text-white w-14 h-14 rounded-full flex items-center justify-center shadow-lg z-30 hover:scale-110 transition-transform" aria-label="WhatsApp">
