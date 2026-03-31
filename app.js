@@ -1,5 +1,5 @@
 import { initializeApp } from "firebase/app";
-import { getFirestore, collection, onSnapshot, doc, setDoc, deleteDoc, query, orderBy } from "firebase/firestore";
+import { getFirestore, collection, onSnapshot, doc, setDoc, deleteDoc, query, orderBy, writeBatch } from "firebase/firestore";
 import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "firebase/auth";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { firebaseConfig } from "./firebase-config.js";
@@ -17,6 +17,9 @@ const IMGBB_API_KEY = "14a67838d94e610b36611cb094ba1b3e";
 let products = [];
 let isAdmin = false;
 let activeGenderFilter = 'Todos';
+let isSaving = false; // Prevents re-renders during batch writes
+let draggedProductSku = null; // For product card drag & drop
+let autoScrollInterval = null; // For auto-scrolling during drag
 
 // --- DOM Elements ---
 const productsContainer = document.getElementById('products-container');
@@ -25,10 +28,17 @@ const editModal = document.getElementById('edit-modal');
 const btnDoLogin = document.getElementById('btn-do-login');
 const btnAddProduct = document.getElementById('btn-add-product');
 
+// --- Debounced render to avoid rapid re-renders from multiple snapshots ---
+let renderTimeout = null;
+function scheduleRender() {
+    if (renderTimeout) clearTimeout(renderTimeout);
+    renderTimeout = setTimeout(() => renderProducts(), 100);
+}
+
 // --- Real-time Products Sync ---
 onSnapshot(collection(db, "products"), (snapshot) => {
     products = snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }));
-    renderProducts();
+    if (!isSaving) scheduleRender();
 });
 
 // --- Auth Handling ---
@@ -144,19 +154,21 @@ function renderProducts() {
             imagesHtml = `<div class="product-image w-full h-full bg-gradient-to-br from-burgundy/5 to-burgundy/15 flex items-center justify-center"><span class="text-burgundy/40 text-sm">Sin imagen</span></div>`;
           }
 
-          // Admin order arrows
-          const orderArrowsHtml = isAdmin ? `
-            <div class="order-arrows">
-              <button class="order-arrow" onclick="event.stopPropagation(); moveProduct('${product.sku}', -1)" title="Mover arriba">↑</button>
-              <button class="order-arrow" onclick="event.stopPropagation(); moveProduct('${product.sku}', 1)" title="Mover abajo">↓</button>
+          // Admin drag handle for reordering
+          const dragHandleHtml = isAdmin ? `
+            <div class="drag-handle" title="Arrastrá para reordenar">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="6" r="1.5"/><circle cx="15" cy="6" r="1.5"/><circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/><circle cx="9" cy="18" r="1.5"/><circle cx="15" cy="18" r="1.5"/></svg>
             </div>
           ` : '';
+
+          // Admin draggable attributes
+          const draggableAttr = isAdmin ? `draggable="true" data-sku="${product.sku}" data-category="${product.category}"` : '';
           
           sectionHtml += `
-             <article class="product-card group ${cardBgColor} rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500">
+             <article class="product-card group ${cardBgColor} rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500" ${draggableAttr}>
               <div class="relative overflow-hidden aspect-square rounded-t-2xl">
                  ${isAdmin ? `<button class="edit-btn" onclick="event.stopPropagation(); openEditModal('${product.sku}')">✏️</button>` : ''}
-                 ${orderArrowsHtml}
+                 ${dragHandleHtml}
                  ${imagesHtml}
               </div>
               <div class="p-6">
@@ -188,62 +200,159 @@ function renderProducts() {
         alternator++;
     });
     
+    // Destroy any existing product swipers to prevent memory leaks
+    document.querySelectorAll('.product-swiper').forEach(el => {
+        if (el.swiper) el.swiper.destroy(true, true);
+    });
+    
     productsContainer.innerHTML = html;
-    new Swiper('.product-swiper', { loop: true, pagination: { el: '.swiper-pagination', clickable: true } });
+    
+    // Initialize new swipers
+    document.querySelectorAll('.product-swiper').forEach(el => {
+        new Swiper(el, { loop: true, pagination: { el: el.querySelector('.swiper-pagination'), clickable: true } });
+    });
+
+    // Attach drag & drop listeners to product cards when admin
+    if (isAdmin) {
+        productsContainer.querySelectorAll('.product-card[draggable]').forEach(card => {
+            card.addEventListener('dragstart', handleProductDragStart);
+            card.addEventListener('dragover', handleProductDragOver);
+            card.addEventListener('dragenter', handleProductDragEnter);
+            card.addEventListener('dragleave', handleProductDragLeave);
+            card.addEventListener('drop', handleProductDrop);
+            card.addEventListener('dragend', handleProductDragEnd);
+        });
+    }
 }
 
-// --- Product Reordering ---
-window.moveProduct = async (sku, direction) => {
-    const product = products.find(p => p.sku === sku);
-    if (!product) return;
+// --- Product Drag & Drop Reordering ---
+let lastDragY = 0;
 
-    // Get products in same category, sorted by order
+function handleProductDragStart(e) {
+    draggedProductSku = e.currentTarget.dataset.sku;
+    e.currentTarget.classList.add('product-dragging');
+    e.dataTransfer.effectAllowed = 'move';
+    // Use a transparent image so the default ghost isn't shown with broken layout
+    const ghost = e.currentTarget.cloneNode(true);
+    ghost.style.width = e.currentTarget.offsetWidth + 'px';
+    ghost.style.opacity = '0.8';
+    ghost.style.position = 'absolute';
+    ghost.style.top = '-9999px';
+    document.body.appendChild(ghost);
+    e.dataTransfer.setDragImage(ghost, ghost.offsetWidth / 2, 30);
+    setTimeout(() => document.body.removeChild(ghost), 0);
+
+    // Start auto-scroll interval
+    startAutoScroll();
+}
+
+function startAutoScroll() {
+    if (autoScrollInterval) clearInterval(autoScrollInterval);
+    autoScrollInterval = setInterval(() => {
+        const edgeSize = 80; // px from edge to trigger scroll
+        const scrollSpeed = 12; // px per tick
+        const y = lastDragY;
+        if (y < edgeSize) {
+            window.scrollBy(0, -scrollSpeed);
+        } else if (y > window.innerHeight - edgeSize) {
+            window.scrollBy(0, scrollSpeed);
+        }
+    }, 16); // ~60fps
+}
+
+function stopAutoScroll() {
+    if (autoScrollInterval) {
+        clearInterval(autoScrollInterval);
+        autoScrollInterval = null;
+    }
+}
+
+// Track mouse position during drag (dragover fires continuously)
+document.addEventListener('dragover', (e) => {
+    if (draggedProductSku) {
+        lastDragY = e.clientY;
+    }
+});
+
+function handleProductDragOver(e) {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+}
+
+function handleProductDragEnter(e) {
+    e.preventDefault();
+    const card = e.currentTarget;
+    // Only highlight if same category
+    if (card.dataset.category === products.find(p => p.sku === draggedProductSku)?.category) {
+        card.classList.add('product-drag-over');
+    }
+}
+
+function handleProductDragLeave(e) {
+    e.currentTarget.classList.remove('product-drag-over');
+}
+
+async function handleProductDrop(e) {
+    e.preventDefault();
+    const targetCard = e.currentTarget;
+    targetCard.classList.remove('product-drag-over');
+    
+    const targetSku = targetCard.dataset.sku;
+    if (!draggedProductSku || draggedProductSku === targetSku) return;
+    
+    const srcProduct = products.find(p => p.sku === draggedProductSku);
+    const tgtProduct = products.find(p => p.sku === targetSku);
+    if (!srcProduct || !tgtProduct) return;
+    
+    // Only allow reorder within same category
+    if (srcProduct.category !== tgtProduct.category) return;
+    
+    // Get all products in this category sorted by order
     const catProducts = products
-        .filter(p => p.category === product.category)
+        .filter(p => p.category === srcProduct.category)
         .sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
     
-    // Ensure all products have distinct, sequential order values
-    // (fixes the case where all products start with order=0 or undefined)
+    // Initialize order values if needed
     const needsInit = catProducts.every(p => (p.order ?? 0) === (catProducts[0].order ?? 0));
     if (needsInit) {
-        for (let i = 0; i < catProducts.length; i++) {
-            catProducts[i].order = i;
-        }
-        // Save all initial orders to Firestore
-        try {
-            for (const p of catProducts) {
-                const data = { ...p };
-                delete data.id;
-                await setDoc(doc(db, "products", p.sku), data);
-            }
-        } catch (e) {
-            console.error("Error initializing order:", e);
-        }
+        catProducts.forEach((p, i) => { p.order = i; });
     }
-
-    const currentIdx = catProducts.findIndex(p => p.sku === sku);
-    const targetIdx = currentIdx + direction;
     
-    if (targetIdx < 0 || targetIdx >= catProducts.length) return; // already at edge
+    const srcIdx = catProducts.findIndex(p => p.sku === draggedProductSku);
+    const tgtIdx = catProducts.findIndex(p => p.sku === targetSku);
+    if (srcIdx === -1 || tgtIdx === -1) return;
     
-    const targetProduct = catProducts[targetIdx];
+    // Remove source and insert at target position
+    const [moved] = catProducts.splice(srcIdx, 1);
+    catProducts.splice(tgtIdx, 0, moved);
     
-    // Swap order values
-    const currentOrder = product.order ?? currentIdx;
-    const targetOrder = targetProduct.order ?? targetIdx;
+    // Reassign order values sequentially
+    catProducts.forEach((p, i) => { p.order = i; });
     
+    // Atomic batch write — prevents partial snapshots from deleting products
+    isSaving = true;
     try {
-        const productData = { ...product, order: targetOrder };
-        delete productData.id;
-        const targetData = { ...targetProduct, order: currentOrder };
-        delete targetData.id;
-        
-        await setDoc(doc(db, "products", product.sku), productData);
-        await setDoc(doc(db, "products", targetProduct.sku), targetData);
-    } catch (e) {
-        alert("Error al reordenar: " + e.message);
+        const batch = writeBatch(db);
+        for (const p of catProducts) {
+            const data = { ...p };
+            delete data.id;
+            batch.set(doc(db, "products", p.sku), data);
+        }
+        await batch.commit();
+    } catch (err) {
+        alert("Error al reordenar: " + err.message);
+    } finally {
+        isSaving = false;
+        renderProducts();
     }
-};
+}
+
+function handleProductDragEnd(e) {
+    e.currentTarget.classList.remove('product-dragging');
+    document.querySelectorAll('.product-card').forEach(el => el.classList.remove('product-drag-over'));
+    draggedProductSku = null;
+    stopAutoScroll();
+}
 
 // --- Modals Logic ---
 let modalQty = 1;
@@ -442,6 +551,7 @@ window.saveProduct = async () => {
     
     saveBtn.disabled = true;
     saveBtn.textContent = "Guardando...";
+    isSaving = true;
 
     try {
         // Generate SKU if new
@@ -510,8 +620,10 @@ window.saveProduct = async () => {
     } catch (e) {
         alert("Error: " + e.message);
     } finally {
+        isSaving = false;
         saveBtn.disabled = false;
         saveBtn.textContent = "💾 Guardar Cambios";
+        renderProducts();
     }
 };
 

@@ -16,11 +16,12 @@
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&amp;family=Raleway:wght@300;400;500;600&amp;family=Montserrat:wght@300;400;500;600&amp;display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+  <noscript><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&amp;family=Raleway:wght@300;400;500;600&amp;family=Montserrat:wght@300;400;500;600&amp;display=swap" rel="stylesheet"></noscript>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
-  <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&amp;family=Raleway:wght@300;400;500;600&amp;family=Montserrat:wght@300;400;500;600&amp;display=swap" rel="stylesheet">
-  </noscript>
+  <script defer src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 
   <!-- Firebase SDK -->
   <script type="importmap">
@@ -120,10 +121,13 @@
     .filter-bar { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-bottom: 12px; }
     .filter-btn { padding: 8px 20px; border-radius: 25px; border: 2px solid #6F1D1B; background: transparent; color: #6F1D1B; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.25s; font-family: 'Montserrat', sans-serif; letter-spacing: 0.5px; }
     .filter-btn:hover, .filter-btn.active { background: #6F1D1B; color: white; }
-    /* Admin Order Arrows */
-    .order-arrows { position: absolute; top: 8px; left: 8px; z-index: 10; display: flex; flex-direction: column; gap: 4px; }
-    .order-arrow { width: 30px; height: 30px; background: rgba(255,255,255,0.9); border-radius: 50%; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px; color: #6F1D1B; box-shadow: 0 2px 8px rgba(0,0,0,0.15); transition: all 0.2s; }
-    .order-arrow:hover { background: #6F1D1B; color: white; transform: scale(1.1); }
+    /* Admin Drag & Drop Reorder */
+    .product-card[draggable] { cursor: grab; }
+    .product-card[draggable]:active { cursor: grabbing; }
+    .product-card.product-dragging { opacity: 0.35; transform: scale(0.97); box-shadow: none; }
+    .product-card.product-drag-over { outline: 3px dashed #6F1D1B; outline-offset: 4px; transform: scale(1.02); transition: all 0.2s ease; }
+    .drag-handle { position: absolute; top: 8px; left: 8px; z-index: 10; width: 34px; height: 34px; background: rgba(255,255,255,0.92); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #6F1D1B; box-shadow: 0 2px 8px rgba(0,0,0,0.15); cursor: grab; transition: all 0.2s; }
+    .drag-handle:hover { background: #6F1D1B; color: white; transform: scale(1.1); }
     /* Custom Scrollbar */
     .custom-scrollbar::-webkit-scrollbar { width: 4px; }
     .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
