@@ -36,10 +36,29 @@ function scheduleRender() {
 }
 
 // --- Real-time Products Sync ---
-onSnapshot(collection(db, "products"), (snapshot) => {
-    products = snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }));
-    if (!isSaving) scheduleRender();
-});
+onSnapshot(
+    collection(db, "products"),
+    (snapshot) => {
+        console.log(`[Magnolia] Firestore sync: ${snapshot.docs.length} productos cargados`);
+        products = snapshot.docs.map(doc => ({ ...doc.data(), id: doc.id }));
+        if (!isSaving) scheduleRender();
+    },
+    (error) => {
+        console.error('[Magnolia] ERROR de Firestore:', error.code, error.message);
+        // Show a visible error banner so the user knows something is wrong
+        const banner = document.createElement('div');
+        banner.id = 'firestore-error-banner';
+        banner.style.cssText = 'position:fixed;top:0;left:0;right:0;z-index:9999;background:#dc2626;color:white;padding:16px;text-align:center;font-family:sans-serif;font-size:14px;';
+        if (error.code === 'permission-denied') {
+            banner.innerHTML = '⚠️ <b>Error de permisos en Firebase.</b> Las reglas de seguridad pueden haber vencido. Contactá al administrador.';
+        } else {
+            banner.innerHTML = `⚠️ <b>Error al cargar productos:</b> ${error.message}. Intentá recargar la página.`;
+        }
+        if (!document.getElementById('firestore-error-banner')) {
+            document.body.prepend(banner);
+        }
+    }
+);
 
 // --- Auth Handling ---
 onAuthStateChanged(auth, (user) => {
@@ -554,11 +573,19 @@ window.saveProduct = async () => {
     isSaving = true;
 
     try {
-        // Generate SKU if new
+        // Generate SKU if new — use MAX existing number to avoid collisions
         if (mode === 'new') {
             const prefix = { 'Billeteras y Accesorios': 'BA', 'Bolsos y Mochilas': 'BM', 'Sombreros y Gorras': 'SG' }[category] || 'XX';
-            const count = products.filter(p => p.sku.startsWith(prefix)).length;
-            sku = `${prefix}-${String(count + 1).padStart(3, '0')}`;
+            // Find the highest existing SKU number for this prefix
+            const existingNumbers = products
+                .filter(p => p.sku.startsWith(prefix + '-'))
+                .map(p => {
+                    const num = parseInt(p.sku.split('-')[1], 10);
+                    return isNaN(num) ? 0 : num;
+                });
+            const maxNum = existingNumbers.length > 0 ? Math.max(...existingNumbers) : 0;
+            sku = `${prefix}-${String(maxNum + 1).padStart(3, '0')}`;
+            console.log(`[Magnolia] Nuevo SKU generado: ${sku} (máx existente: ${maxNum})`);
         }
 
         const finalImages = [];
@@ -566,7 +593,15 @@ window.saveProduct = async () => {
             const img = editImages[i];
             if (img.startsWith('data:')) {
                 // Upload to ImgBB
+                saveBtn.textContent = `Subiendo imagen ${i + 1}/${editImages.length}...`;
                 const base64Data = img.split(',')[1];
+                
+                // Check base64 size before upload (ImgBB limit: ~32MB)
+                const sizeInBytes = base64Data.length * 0.75;
+                if (sizeInBytes > 30 * 1024 * 1024) {
+                    throw new Error(`La imagen ${i + 1} es demasiado grande (${(sizeInBytes / 1024 / 1024).toFixed(1)}MB). Máximo: 30MB.`);
+                }
+                
                 const formData = new FormData();
                 formData.append('image', base64Data);
                 
@@ -579,17 +614,20 @@ window.saveProduct = async () => {
                     
                     if (result.success) {
                         finalImages.push(result.data.url);
+                        console.log(`[Magnolia] Imagen ${i + 1} subida: ${result.data.url}`);
                     } else {
                         throw new Error(result.error ? result.error.message : "Error desconocido en ImgBB");
                     }
                 } catch (err) {
-                    console.error("Error subiendo a ImgBB:", err);
-                    throw new Error("No se pudo subir la imagen: " + err.message);
+                    console.error('[Magnolia] Error subiendo a ImgBB:', err);
+                    throw new Error(`No se pudo subir la imagen ${i + 1}: ${err.message}`);
                 }
             } else {
                 finalImages.push(img);
             }
         }
+
+        saveBtn.textContent = 'Guardando en Firebase...';
 
         const catIdMap = { 'Billeteras y Accesorios': 'billeteras-y-accesorios', 'Bolsos y Mochilas': 'bolsos-y-mochilas', 'Sombreros y Gorras': 'sombreros-y-gorras' };
         
@@ -614,11 +652,23 @@ window.saveProduct = async () => {
             order
         };
 
+        // Check document size (Firestore limit: 1 MiB)
+        const docSize = new Blob([JSON.stringify(productData)]).size;
+        if (docSize > 900 * 1024) {
+            throw new Error(`El producto es demasiado grande (${(docSize / 1024).toFixed(0)}KB). Reducí el tamaño de las descripciones o imágenes.`);
+        }
+
+        console.log('[Magnolia] Guardando producto:', sku, productData);
         await setDoc(doc(db, "products", sku), productData);
+        
+        // Verify the save was successful
+        console.log(`[Magnolia] ✅ Producto ${sku} guardado exitosamente en Firestore`);
+        
         window.closeEditModal();
-        alert("¡Guardado!");
+        alert(`¡Guardado! Producto ${sku} guardado correctamente.`);
     } catch (e) {
-        alert("Error: " + e.message);
+        console.error('[Magnolia] ❌ Error al guardar:', e);
+        alert(`Error al guardar: ${e.message}\n\nSi el problema persiste, verificá tu conexión a internet y que las reglas de Firebase no hayan vencido.`);
     } finally {
         isSaving = false;
         saveBtn.disabled = false;
