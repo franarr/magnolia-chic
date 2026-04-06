@@ -9,7 +9,7 @@
   <!-- Open Graph / Redes Sociales -->
   <meta property="og:type" content="website">
   <meta property="og:title" content="Magnolia Chic | Marroquinería y Accesorios">
-  <meta property="og:description" content="Encontrá carteras, mochilas, billeteras y accesorios de las mejores marcas. Envíos a todo el país y retiro gratis en showroom.">
+  <meta property="og:description" content="Encontrá carteras, mochilas, billeteras y accesorios de las mejores marcas. Envíos a domicilio a todo el país. Productos 100% originales.">
   <meta property="og:image" content="https://files.catbox.moe/bm6yyb.jpeg">
   <meta property="og:url" content="https://magnolia-chic.vercel.app/">
   <meta property="og:site_name" content="Magnolia Chic">
@@ -55,6 +55,24 @@
   </script>
   <style>
     html { scroll-behavior: smooth; }
+    /* Loading Skeleton */
+    .skeleton-container { padding: 80px 0; min-height: 70vh; }
+    .skeleton-title { width: 180px; height: 14px; background: linear-gradient(90deg, #e8e0d0 25%, #f5f0e6 50%, #e8e0d0 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 8px; margin: 0 auto 8px; }
+    .skeleton-heading { width: 280px; height: 36px; background: linear-gradient(90deg, #e8e0d0 25%, #f5f0e6 50%, #e8e0d0 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 12px; margin: 0 auto 48px; }
+    .skeleton-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 32px; max-width: 1280px; margin: 0 auto; padding: 0 24px; }
+    .skeleton-card { background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+    .skeleton-img { aspect-ratio: 1; background: linear-gradient(90deg, #e8e0d0 25%, #f5f0e6 50%, #e8e0d0 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; }
+    .skeleton-body { padding: 24px; }
+    .skeleton-line { height: 12px; background: linear-gradient(90deg, #e8e0d0 25%, #f5f0e6 50%, #e8e0d0 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 6px; margin-bottom: 12px; }
+    .skeleton-line.w60 { width: 60%; }
+    .skeleton-line.w80 { width: 80%; }
+    .skeleton-line.w40 { width: 40%; }
+    .skeleton-line.h20 { height: 20px; }
+    .skeleton-line.h40 { height: 40px; border-radius: 12px; }
+    .skeleton-dots { display: flex; gap: 8px; margin-bottom: 16px; }
+    .skeleton-dot { width: 24px; height: 24px; border-radius: 50%; background: linear-gradient(90deg, #e8e0d0 25%, #f5f0e6 50%, #e8e0d0 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; }
+    .skeleton-price-box { background: #f5f0e6; border-radius: 12px; padding: 16px; margin-bottom: 16px; }
+    @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
     .product-card:hover .product-image { transform: scale(1.05); }
     .product-image { transition: transform 0.5s ease; }
     .nav-link { position: relative; }
@@ -333,7 +351,22 @@
      </div>
     </div>
     
-    <div id="products-container"></div>
+    <div id="products-container">
+      <!-- Loading Skeleton -->
+      <div id="loading-skeleton">
+        <div class="skeleton-container">
+          <div style="text-align:center;margin-bottom:48px">
+            <div class="skeleton-title"></div>
+            <div class="skeleton-heading"></div>
+          </div>
+          <div class="skeleton-grid">
+            <div class="skeleton-card"><div class="skeleton-img"></div><div class="skeleton-body"><div class="skeleton-line w60"></div><div class="skeleton-line w80 h20"></div><div class="skeleton-dots"><div class="skeleton-dot"></div><div class="skeleton-dot"></div><div class="skeleton-dot"></div></div><div class="skeleton-price-box"><div class="skeleton-line w40"></div><div class="skeleton-line w60 h20"></div></div><div class="skeleton-line h40"></div></div></div>
+            <div class="skeleton-card"><div class="skeleton-img"></div><div class="skeleton-body"><div class="skeleton-line w60"></div><div class="skeleton-line w80 h20"></div><div class="skeleton-dots"><div class="skeleton-dot"></div><div class="skeleton-dot"></div></div><div class="skeleton-price-box"><div class="skeleton-line w40"></div><div class="skeleton-line w60 h20"></div></div><div class="skeleton-line h40"></div></div></div>
+            <div class="skeleton-card"><div class="skeleton-img"></div><div class="skeleton-body"><div class="skeleton-line w60"></div><div class="skeleton-line w80 h20"></div><div class="skeleton-dots"><div class="skeleton-dot"></div><div class="skeleton-dot"></div><div class="skeleton-dot"></div></div><div class="skeleton-price-box"><div class="skeleton-line w40"></div><div class="skeleton-line w60 h20"></div></div><div class="skeleton-line h40"></div></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
 
    <!-- Contact CTA Section -->
    <section id="contacto" class="py-24 bg-beige text-center border-t border-beige-dark">
@@ -349,15 +382,23 @@
 
    <footer class="bg-black text-white py-10">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center flex flex-col items-center gap-5">
-     <div class="bg-white/10 px-6 py-3 rounded-full inline-block backdrop-blur-sm">
-       <p class="text-sm md:text-base font-medium tracking-wide uppercase text-white/90 flex items-center justify-center gap-2">
-         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
-         Envíos a todo el país | Retiro gratis en Showroom
-       </p>
-     </div>
-     <p class="text-white/60 text-sm max-w-md mx-auto leading-relaxed">
-       Aceptamos Transferencia <span class="text-white font-semibold">(10% OFF)</span><br> Mercado Pago y Efectivo en el local.
-     </p>
+      <div class="bg-white/10 px-6 py-4 rounded-2xl inline-block backdrop-blur-sm max-w-lg">
+        <p class="text-sm md:text-base font-medium tracking-wide uppercase text-white/90 flex items-center justify-center gap-2 mb-2">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+          Ciudad de Santa Fe, Argentina
+        </p>
+        <p class="text-sm md:text-base font-medium tracking-wide uppercase text-white/90 flex items-center justify-center gap-2 mb-2">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+          Envíos a domicilio a todo el país
+        </p>
+        <p class="text-sm md:text-base font-medium tracking-wide uppercase text-white/90 flex items-center justify-center gap-2">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+          Productos 100% originales con etiquetas
+        </p>
+      </div>
+      <p class="text-white/60 text-sm max-w-md mx-auto leading-relaxed">
+        Aceptamos Mercado Pago, Efectivo y Tarjeta
+      </p>
      <hr class="w-24 border-white/10 my-2">
      <p class="text-xs text-white/40 tracking-wider">© 2026 Magnolia Chic. Todos los derechos reservados.</p>
       <!-- Admin access hidden: use #admin in URL -->

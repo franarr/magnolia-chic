@@ -114,6 +114,25 @@ window.filterByGender = (gender) => {
 function renderProducts() {
     if (!productsContainer) return;
     
+    // Default fallback: if this is the first load and cache is completely empty, 
+    // wait for Firebase. If it's still empty, we still keep the skeleton unless we explicitly force it.
+    const skeleton = document.getElementById('loading-skeleton');
+    const isFirstLoad = !!skeleton;
+
+    // Wait until products load before removing skeleton.
+    // Give it a max of 2.5 seconds to wait for network products if cache is empty.
+    if (isFirstLoad && products.length === 0) {
+        if (!window.initialRenderTimeoutApplied) {
+            window.initialRenderTimeoutApplied = true;
+            setTimeout(() => {
+                if (products.length === 0 && document.getElementById('loading-skeleton')) {
+                    productsContainer.innerHTML = '<div style="text-align:center;padding:100px 20px;color:#6F1D1B;font-family:serif;font-size:20px;">Próximamente nuevos productos...</div>';
+                }
+            }, 2500);
+        }
+        return; 
+    }
+    
     // Apply gender filter
     let filteredProducts = products;
     if (activeGenderFilter !== 'Todos') {
@@ -219,17 +238,54 @@ function renderProducts() {
         alternator++;
     });
     
+    // We already checked this at the very top of renderProducts, just use the variables!
+    // const skeleton = document.getElementById('loading-skeleton');
+    // const isFirstLoad = !!skeleton;
+
     // Destroy any existing product swipers to prevent memory leaks
     document.querySelectorAll('.product-swiper').forEach(el => {
         if (el.swiper) el.swiper.destroy(true, true);
     });
-    
-    productsContainer.innerHTML = html;
-    
+
+    if (isFirstLoad) {
+        // Smooth transition: fade out skeleton, then fade in products
+        skeleton.style.transition = 'opacity 0.4s ease';
+        skeleton.style.opacity = '0';
+        setTimeout(() => {
+            productsContainer.innerHTML = html;
+            initAfterRender(true);
+        }, 400);
+    } else {
+        productsContainer.innerHTML = html;
+        initAfterRender(false);
+    }
+}
+
+function initAfterRender(animateIn) {
     // Initialize new swipers
     document.querySelectorAll('.product-swiper').forEach(el => {
         new Swiper(el, { loop: true, pagination: { el: el.querySelector('.swiper-pagination'), clickable: true } });
     });
+
+    // Animate product cards in with stagger effect
+    if (animateIn) {
+        const cards = productsContainer.querySelectorAll('.product-card');
+        cards.forEach((card, i) => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(30px)';
+            card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+            setTimeout(() => {
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            }, 80 + i * 60); // staggered: each card 60ms after the previous
+        });
+        // Also fade in sections
+        productsContainer.querySelectorAll('section').forEach((section, i) => {
+            section.style.opacity = '0';
+            section.style.transition = 'opacity 0.5s ease';
+            setTimeout(() => { section.style.opacity = '1'; }, i * 150);
+        });
+    }
 
     // Attach drag & drop listeners to product cards when admin
     if (isAdmin) {
