@@ -256,8 +256,14 @@ function renderProducts() {
             initAfterRender(true);
         }, 400);
     } else {
-        productsContainer.innerHTML = html;
-        initAfterRender(false);
+        // Add a fade effect for filtering
+        productsContainer.style.transition = 'opacity 0.2s ease';
+        productsContainer.style.opacity = '0';
+        setTimeout(() => {
+            productsContainer.innerHTML = html;
+            productsContainer.style.opacity = '1';
+            initAfterRender(true);
+        }, 200);
     }
 }
 
